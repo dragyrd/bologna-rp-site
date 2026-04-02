@@ -45,6 +45,16 @@
             margin-bottom: 30px;
         }
 
+        .game-code {
+            background: rgba(0,0,0,0.5);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
         /* Pulsanti */
         .btn-group {
             display: flex;
@@ -84,6 +94,14 @@
             background: #00aaff;
         }
 
+        .btn-danger {
+            background: #ff5555;
+        }
+
+        .btn-danger:hover {
+            background: #cc4444;
+        }
+
         .btn:hover {
             transform: translateY(-3px);
         }
@@ -119,6 +137,99 @@
         .card h3 {
             color: #00aaff;
             margin-bottom: 10px;
+        }
+
+        /* Sezione Annunci */
+        .annunci-section {
+            margin: 40px 0;
+            background: rgba(26, 31, 46, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(5px);
+        }
+
+        .annunci-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+        }
+
+        .annunci-header h2 {
+            color: #00aaff;
+        }
+
+        .annunci-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .annuncio-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #00aaff;
+        }
+
+        .annuncio-titolo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .annuncio-contenuto {
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .annuncio-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .delete-annuncio {
+            background: #ff5555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .delete-annuncio:hover {
+            background: #cc4444;
+        }
+
+        /* Form Annuncio (solo admin) */
+        .admin-form {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .admin-form input, .admin-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #0f1420;
+            border: 1px solid #00aaff;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .admin-form textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
         /* Server stats */
@@ -198,10 +309,14 @@
         <div class="header">
             <h1>⚜️ BOLOGNA | RP ⚜️</h1>
             <div class="subtitle">▸ ROLEPLAY ITALIANO SU ER:LC ◂</div>
+            <div class="game-code">🎮 Codice in-game: <strong>nDCjR</strong></div>
         </div>
 
-        <!-- Area utente (verrà popolata da JavaScript) -->
+        <!-- Area utente -->
         <div id="userArea"></div>
+
+        <!-- Sezione Annunci -->
+        <div id="annunciSection" class="annunci-section"></div>
 
         <!-- Statistiche server -->
         <div class="server-stats" id="server-stats">
@@ -236,68 +351,160 @@
 
         <!-- Footer -->
         <footer>
-            <p>© 2025 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
-            <p>🎮 Codice ER:LC: <strong>siUvq</strong></p>
+            <p>© 2026 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
+            <p>🎮 Codice ER:LC: <strong>nDCjR</strong> | <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" style="color: #00aaff;">📜 Regolamento</a></p>
         </footer>
     </div>
 
     <script>
         // ================= CONFIGURAZIONE =================
-        // Client ID Discord (GIÀ INSERITO)
         const DISCORD_CLIENT_ID = "1489266190432997520";
+        const REDIRECT_URI = encodeURIComponent(window.location.origin + "/callback.html");
+        const DISCORD_AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify`;
         
-        // URL di reindirizzamento (cambia con il tuo dominio Vercel)
-        const REDIRECT_URI = encodeURIComponent("https://bologna-rp-site.vercel.app/callback.html");
-        
-        // URL di autorizzazione Discord
-        const DISCORD_AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify+guilds`;
-        
-        // API Render
-        const API_URL = "https://liberty-ita-api-1.onrender.com";
         const INVITE_CODE = "Gkj7Qdm63Z";
         
-        // ================= FUNZIONI =================
+        // ================= GESTIONE ANNUNCI =================
+        let annunci = [];
         
-        // Logout
+        // Carica annunci dal localStorage
+        function loadAnnunci() {
+            const saved = localStorage.getItem('bologna_annunci');
+            if (saved) {
+                annunci = JSON.parse(saved);
+            } else {
+                // Annunci di esempio
+                annunci = [
+                    {
+                        id: Date.now(),
+                        titolo: "🎉 Benvenuto su Bologna | RP!",
+                        contenuto: "Siamo felici di averti nella nostra community! Leggi il regolamento e divertiti.",
+                        data: new Date().toLocaleString('it-IT'),
+                        autore: "Staff"
+                    }
+                ];
+                saveAnnunci();
+            }
+            renderAnnunci();
+        }
+        
+        // Salva annunci nel localStorage
+        function saveAnnunci() {
+            localStorage.setItem('bologna_annunci', JSON.stringify(annunci));
+        }
+        
+        // Aggiungi annuncio
+        function aggiungiAnnuncio(titolo, contenuto, autore) {
+            const nuovoAnnuncio = {
+                id: Date.now(),
+                titolo: titolo,
+                contenuto: contenuto,
+                data: new Date().toLocaleString('it-IT'),
+                autore: autore
+            };
+            annunci.unshift(nuovoAnnuncio);
+            saveAnnunci();
+            renderAnnunci();
+        }
+        
+        // Elimina annuncio
+        function eliminaAnnuncio(id) {
+            annunci = annunci.filter(a => a.id !== id);
+            saveAnnunci();
+            renderAnnunci();
+        }
+        
+        // Renderizza annunci
+        function renderAnnunci() {
+            const section = document.getElementById('annunciSection');
+            if (!section) return;
+            
+            if (annunci.length === 0) {
+                section.innerHTML = `
+                    <div class="annunci-header">
+                        <h2>📢 ANNUNCI UFFICIALI</h2>
+                    </div>
+                    <div style="text-align: center; padding: 40px; color: #888;">
+                        Nessun annuncio al momento.
+                    </div>
+                `;
+                return;
+            }
+            
+            let annunciHtml = `
+                <div class="annunci-header">
+                    <h2>📢 ANNUNCI UFFICIALI</h2>
+                </div>
+                <div class="annunci-list">
+            `;
+            
+            for (const a of annunci) {
+                annunciHtml += `
+                    <div class="annuncio-item" data-id="${a.id}">
+                        <div class="annuncio-titolo">${escapeHtml(a.titolo)}</div>
+                        <div class="annuncio-contenuto">${escapeHtml(a.contenuto)}</div>
+                        <div class="annuncio-footer">
+                            <span>📅 ${a.data} | 👤 ${escapeHtml(a.autore)}</span>
+                            <button class="delete-annuncio" onclick="if(confirm('Eliminare questo annuncio?')) eliminaAnnuncio(${a.id})">🗑️ Elimina</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            annunciHtml += `</div>`;
+            section.innerHTML = annunciHtml;
+        }
+        
+        // Helper per escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ================= FUNZIONI UTILITY =================
         function logout() {
             localStorage.removeItem('discord_token');
             localStorage.removeItem('discord_user');
             window.location.reload();
         }
         
-        // Login con Discord
         function loginWithDiscord() {
             window.location.href = DISCORD_AUTH_URL;
         }
         
-        // Carica la dashboard utente
+        // Verifica se l'utente è admin (staff o ha ruoli amministrativi)
+        function isAdmin(user) {
+            // Per ora, considera admin chiunque abbia un ID specifico o puoi espandere
+            // In futuro puoi controllare i ruoli Discord
+            const adminIds = []; // Aggiungi qui gli ID Discord degli admin
+            return adminIds.includes(user.id);
+        }
+        
+        // Carica l'area utente
         async function loadUserArea() {
             const token = localStorage.getItem('discord_token');
             const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
             const userArea = document.getElementById('userArea');
             
             if (token && user.id) {
-                // Utente loggato
                 const avatarUrl = user.avatar 
                     ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
                     : 'https://cdn.discordapp.com/embed/avatars/0.png';
                 
-                // Verifica se è registrato nel database
-                let registrato = false;
-                let userData = null;
-                try {
-                    const response = await fetch(`${API_URL}/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ discord_name: user.username })
-                    });
-                    const data = await response.json();
-                    if (data.success) {
-                        registrato = true;
-                        userData = data.user;
-                    }
-                } catch (e) {
-                    console.error("Errore verifica registrazione:", e);
+                const isUserAdmin = isAdmin(user);
+                
+                // Mostra form admin solo se l'utente è admin
+                let adminFormHtml = '';
+                if (isUserAdmin) {
+                    adminFormHtml = `
+                        <div class="admin-form">
+                            <h3 style="color: #00aaff; margin-bottom: 15px;">✏️ NUOVO ANNUNCIO (Staff)</h3>
+                            <input type="text" id="annuncioTitolo" placeholder="Titolo annuncio">
+                            <textarea id="annuncioContenuto" placeholder="Contenuto dell'annuncio..."></textarea>
+                            <button class="btn" style="width: auto; padding: 10px 20px;" onclick="pubblicaAnnuncio()">📢 PUBBLICA ANNUNCIO</button>
+                        </div>
+                    `;
                 }
                 
                 userArea.innerHTML = `
@@ -307,20 +514,17 @@
                         <div class="user-discord">@${user.username}</div>
                         <div>
                             <span class="role-badge">✅ Autenticato con Discord</span>
-                            ${registrato ? '<span class="role-badge">🟣 Cittadino</span>' : '<span class="role-badge">🟡 Turista</span>'}
                         </div>
                         <div class="btn-group" style="margin-top: 20px;">
-                            <a href="dashboard.html" class="btn">📊 VAI ALLA DASHBOARD</a>
                             <button onclick="logout()" class="btn btn-outline">🚪 ESCLUDI</button>
                         </div>
-                        ${!registrato ? '<p style="margin-top: 15px; font-size: 0.8rem;">⚠️ Non sei registrato! Usa <code>/cittadinanza</code> su Discord.</p>' : ''}
                     </div>
+                    ${adminFormHtml}
                 `;
             } else {
-                // Utente non loggato
                 userArea.innerHTML = `
                     <div class="user-card">
-                        <div style="font-size: 2rem; margin-bottom: 10px;">🔐</div>
+                        <div style="font-size: 2rem;">🔐</div>
                         <h2>Area Personale</h2>
                         <p>Accedi con Discord per accedere alla tua dashboard personale</p>
                         <div class="btn-group" style="margin-top: 20px;">
@@ -329,6 +533,24 @@
                     </div>
                 `;
             }
+        }
+        
+        // Pubblica annuncio (chiamato dal form admin)
+        function pubblicaAnnuncio() {
+            const titolo = document.getElementById('annuncioTitolo')?.value;
+            const contenuto = document.getElementById('annuncioContenuto')?.value;
+            const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
+            
+            if (!titolo || !contenuto) {
+                alert('Inserisci sia titolo che contenuto');
+                return;
+            }
+            
+            aggiungiAnnuncio(titolo, contenuto, user.global_name || user.username);
+            
+            // Pulisci form
+            document.getElementById('annuncioTitolo').value = '';
+            document.getElementById('annuncioContenuto').value = '';
         }
         
         // Carica statistiche Discord
@@ -346,7 +568,7 @@
             }
         }
         
-        // Verifica se c'è un token nell'URL (dopo redirect OAuth)
+        // Verifica token nell'URL dopo redirect
         function checkForToken() {
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
@@ -360,7 +582,7 @@
                 .then(res => res.json())
                 .then(user => {
                     localStorage.setItem('discord_user', JSON.stringify(user));
-                    window.location.href = '/';
+                    window.location.href = window.location.origin;
                 })
                 .catch(console.error);
             }
@@ -370,6 +592,7 @@
         checkForToken();
         loadServerStats();
         loadUserArea();
+        loadAnnunci();
     </script>
 
 </body>
