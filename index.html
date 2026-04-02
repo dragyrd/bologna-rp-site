@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bologna | RP - Community Roleplay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(10, 15, 26, 0.85), rgba(10, 15, 26, 0.9)), url('https://i.ibb.co/wNhKTfzq/LOGO.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #eef2ff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        /* Pulsanti */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: #00aaff;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s, background 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #00aaff;
+        }
+
+        .btn-outline:hover {
+            background: #00aaff;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            background: #0088cc;
+        }
+
+        /* Card */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+
+        .card {
+            background: rgba(26, 31, 46, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #00aaff;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: #00aaff;
+            margin-bottom: 10px;
+        }
+
+        /* Server stats */
+        .server-stats {
+            max-width: 400px;
+            margin: 40px auto;
+            background: rgba(26, 31, 46, 0.9);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .member-count {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* Form */
+        .form-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: rgba(26, 31, 46, 0.95);
+            border-radius: 30px;
+            padding: 35px;
+            backdrop-filter: blur(5px);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #00aaff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: #0f1420;
+            border: 1px solid #00aaff;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #33ccff;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(85,255,85,0.2);
+            border: 1px solid #55ff55;
+            color: #55ff55;
+        }
+
+        .message.error {
+            background: rgba(255,85,85,0.2);
+            border: 1px solid #ff5555;
+            color: #ff5555;
+        }
+
+        .message.info {
+            background: rgba(255,170,0,0.2);
+            border: 1px solid #ffaa00;
+            color: #ffaa00;
+        }
+
+        .separator {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem;
+        }
+
+        /* Toggle form */
+        .form-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn.active {
+            background: #00aaff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚜️ BOLOGNA | RP ⚜️</h1>
+            <div class="subtitle">▸ ROLEPLAY ITALIANO SU ER:LC ◂</div>
+        </div>
+
+        <!-- Pulsanti principali -->
+        <div class="btn-group">
+            <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn">💬 DISCORD</a>
+            <a href="#form" class="btn btn-outline" id="showFormBtn">🔐 AREA PERSONALE</a>
+        </div>
+
+        <!-- Statistiche server -->
+        <div class="server-stats" id="server-stats">
+            <div style="font-size: 2rem;">👥</div>
+            <div class="member-count" id="member-count">Caricamento...</div>
+            <div>Membri nel server</div>
+        </div>
+
+        <!-- Caratteristiche -->
+        <div class="features-grid">
+            <div class="card">
+                <div class="card-icon">👮‍♂️</div>
+                <h3>Forze dell'Ordine</h3>
+                <p>Sistema realistico con FDO, multe, arresti e mandati.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🏦</div>
+                <h3>Economia completa</h3>
+                <p>Banca, conti, stipendi, immobili e veicoli.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎫</div>
+                <h3>Sistema Ticket</h3>
+                <p>Supporto rapido con categorie dedicate.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🚔</div>
+                <h3>Ruoli RP</h3>
+                <p>Cittadini, criminali, FDO, EMS, DOT e tanti altri.</p>
+            </div>
+        </div>
+
+        <!-- Area Login/Registrazione -->
+        <div id="form" class="form-container">
+            <div class="form-toggle">
+                <button id="loginTab" class="toggle-btn active">🔑 ACCEDI</button>
+                <button id="registerTab" class="toggle-btn">📝 REGISTRATI</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2>🔐 Accedi</h2>
+                <div class="form-group">
+                    <input type="text" id="loginDiscord" placeholder="Nome Discord">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="loginRoblox" placeholder="Nome Roblox (opzionale)">
+                </div>
+                <button class="btn" style="width: 100%;" onclick="login()">ACCEDI</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="hidden">
+                <h2>📝 Registrati</h2>
+                <div class="form-group">
+                    <input type="text" id="regNomeRP" placeholder="Nome e Cognome RP">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="regRoblox" placeholder="Nome Roblox">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="regDiscord" placeholder="Nome Discord">
+                </div>
+                <button class="btn" style="width: 100%;" onclick="register()">REGISTRATI</button>
+            </div>
+
+            <div id="message" class="message"></div>
+            <div class="separator">⚜️ Bologna | RP ⚜️</div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>© 2025 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
+            <p>🎮 Codice ER:LC: <strong>siUvq</strong></p>
+        </footer>
+    </div>
+
+    <script>
+        // API URL (Render)
+        const API_URL = "https://liberty-ita-api-1.onrender.com";
+        
+        // Invito Discord
+        const INVITE_CODE = "Gkj7Qdm63Z";
+        
+        // Carica statistiche Discord
+        fetch(`https://discord.com/api/v9/invites/${INVITE_CODE}?with_counts=true`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.approximate_member_count) {
+                    document.getElementById("member-count").innerText = data.approximate_member_count;
+                } else {
+                    document.getElementById("member-count").innerText = "💚 Apri il server";
+                }
+            })
+            .catch(() => {
+                document.getElementById("member-count").innerText = "🔗 Unisciti a noi!";
+            });
+        
+        // Toggle tra Login e Register
+        document.getElementById("loginTab").addEventListener("click", () => {
+            document.getElementById("loginForm").classList.remove("hidden");
+            document.getElementById("registerForm").classList.add("hidden");
+            document.getElementById("loginTab").classList.add("active");
+            document.getElementById("registerTab").classList.remove("active");
+            document.getElementById("message").style.display = "none";
+        });
+        
+        document.getElementById("registerTab").addEventListener("click", () => {
+            document.getElementById("registerForm").classList.remove("hidden");
+            document.getElementById("loginForm").classList.add("hidden");
+            document.getElementById("registerTab").classList.add("active");
+            document.getElementById("loginTab").classList.remove("active");
+            document.getElementById("message").style.display = "none";
+        });
+        
+        // Scroll al form
+        document.getElementById("showFormBtn").addEventListener("click", (e) => {
+            e.preventDefault();
+            document.getElementById("form").scrollIntoView({ behavior: "smooth" });
+        });
+        
+        // Funzione Login
+        async function login() {
+            const discord = document.getElementById("loginDiscord").value;
+            const roblox = document.getElementById("loginRoblox").value;
+            const msgDiv = document.getElementById("message");
+            
+            if (!discord && !roblox) {
+                msgDiv.style.display = "block";
+                msgDiv.className = "message error";
+                msgDiv.innerHTML = "❌ Inserisci almeno Discord o Roblox";
+                return;
+            }
+            
+            msgDiv.style.display = "block";
+            msgDiv.className = "message info";
+            msgDiv.innerHTML = "⏳ Caricamento...";
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ discord_name: discord, roblox_name: roblox })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    msgDiv.className = "message success";
+                    msgDiv.innerHTML = `✅ Bentornato ${data.user.nome_rp}! Reindirizzamento...`;
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 1500);
+                } else if (data.error === "Richiesta in attesa di approvazione") {
+                    msgDiv.className = "message info";
+                    msgDiv.innerHTML = `⏳ ${data.error}<br>Riceverai una notifica su Discord quando verrai approvato.`;
+                } else {
+                    msgDiv.className = "message error";
+                    msgDiv.innerHTML = `❌ ${data.error}`;
+                }
+            } catch (error) {
+                msgDiv.className = "message error";
+                msgDiv.innerHTML = "❌ Errore di connessione. Riprova più tardi.";
+            }
+        }
+        
+        // Funzione Register
+        async function register() {
+            const nomeRP = document.getElementById("regNomeRP").value;
+            const roblox = document.getElementById("regRoblox").value;
+            const discord = document.getElementById("regDiscord").value;
+            const msgDiv = document.getElementById("message");
+            
+            if (!nomeRP || !roblox || !discord) {
+                msgDiv.style.display = "block";
+                msgDiv.className = "message error";
+                msgDiv.innerHTML = "❌ Compila tutti i campi";
+                return;
+            }
+            
+            msgDiv.style.display = "block";
+            msgDiv.className = "message info";
+            msgDiv.innerHTML = "⏳ Invio richiesta...";
+            
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        nome_rp: nomeRP,
+                        roblox_name: roblox,
+                        discord_name: discord
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    msgDiv.className = "message success";
+                    msgDiv.innerHTML = `✅ ${data.message}<br>Riceverai una notifica su Discord quando verrai approvato.`;
+                    document.getElementById("regNomeRP").value = "";
+                    document.getElementById("regRoblox").value = "";
+                    document.getElementById("regDiscord").value = "";
+                } else {
+                    msgDiv.className = "message error";
+                    msgDiv.innerHTML = `❌ ${data.error}`;
+                }
+            } catch (error) {
+                msgDiv.className = "message error";
+                msgDiv.innerHTML = "❌ Errore di connessione. Riprova più tardi.";
+            }
+        }
+    </script>
+
+</body>
+</html>
