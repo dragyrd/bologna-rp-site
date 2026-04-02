@@ -18,7 +18,6 @@
             background-position: center;
             background-attachment: fixed;
             color: #eef2ff;
-            line-height: 1.6;
             min-height: 100vh;
         }
 
@@ -32,12 +31,6 @@
         .header {
             text-align: center;
             padding: 40px 20px;
-        }
-
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
         }
 
         h1 {
@@ -74,6 +67,14 @@
             cursor: pointer;
         }
 
+        .btn-discord {
+            background: #5865F2;
+        }
+
+        .btn-discord:hover {
+            background: #4752c4;
+        }
+
         .btn-outline {
             background: transparent;
             border: 2px solid #00aaff;
@@ -85,7 +86,6 @@
 
         .btn:hover {
             transform: translateY(-3px);
-            background: #0088cc;
         }
 
         /* Card */
@@ -138,71 +138,43 @@
             margin: 10px 0;
         }
 
-        /* Form */
-        .form-container {
+        /* User card */
+        .user-card {
             max-width: 500px;
             margin: 40px auto;
             background: rgba(26, 31, 46, 0.95);
             border-radius: 30px;
-            padding: 35px;
+            padding: 30px;
+            text-align: center;
             backdrop-filter: blur(5px);
         }
 
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #00aaff;
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid #00aaff;
         }
 
-        .form-group {
+        .user-name {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .user-discord {
+            color: #aaa;
             margin-bottom: 20px;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: #0f1420;
-            border: 1px solid #00aaff;
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #33ccff;
-        }
-
-        .message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            display: none;
-        }
-
-        .message.success {
-            background: rgba(85,255,85,0.2);
-            border: 1px solid #55ff55;
-            color: #55ff55;
-        }
-
-        .message.error {
-            background: rgba(255,85,85,0.2);
-            border: 1px solid #ff5555;
-            color: #ff5555;
-        }
-
-        .message.info {
-            background: rgba(255,170,0,0.2);
-            border: 1px solid #ffaa00;
-            color: #ffaa00;
-        }
-
-        .separator {
-            text-align: center;
-            margin: 20px 0;
-            color: #666;
+        .role-badge {
+            display: inline-block;
+            background: rgba(0,170,255,0.2);
+            color: #00aaff;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin: 5px;
         }
 
         /* Footer */
@@ -212,32 +184,6 @@
             margin-top: 50px;
             border-top: 1px solid rgba(255,255,255,0.1);
             font-size: 0.8rem;
-        }
-
-        /* Toggle form */
-        .form-toggle {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .toggle-btn {
-            flex: 1;
-            padding: 10px;
-            background: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-
-        .toggle-btn.active {
-            background: #00aaff;
-        }
-
-        .hidden {
-            display: none;
         }
 
         @media (max-width: 768px) {
@@ -254,11 +200,8 @@
             <div class="subtitle">▸ ROLEPLAY ITALIANO SU ER:LC ◂</div>
         </div>
 
-        <!-- Pulsanti principali -->
-        <div class="btn-group">
-            <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn">💬 DISCORD</a>
-            <a href="#form" class="btn btn-outline" id="showFormBtn">🔐 AREA PERSONALE</a>
-        </div>
+        <!-- Area utente (verrà popolata da JavaScript) -->
+        <div id="userArea"></div>
 
         <!-- Statistiche server -->
         <div class="server-stats" id="server-stats">
@@ -291,44 +234,6 @@
             </div>
         </div>
 
-        <!-- Area Login/Registrazione -->
-        <div id="form" class="form-container">
-            <div class="form-toggle">
-                <button id="loginTab" class="toggle-btn active">🔑 ACCEDI</button>
-                <button id="registerTab" class="toggle-btn">📝 REGISTRATI</button>
-            </div>
-
-            <!-- Login Form -->
-            <div id="loginForm">
-                <h2>🔐 Accedi</h2>
-                <div class="form-group">
-                    <input type="text" id="loginDiscord" placeholder="Nome Discord">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="loginRoblox" placeholder="Nome Roblox (opzionale)">
-                </div>
-                <button class="btn" style="width: 100%;" onclick="login()">ACCEDI</button>
-            </div>
-
-            <!-- Register Form -->
-            <div id="registerForm" class="hidden">
-                <h2>📝 Registrati</h2>
-                <div class="form-group">
-                    <input type="text" id="regNomeRP" placeholder="Nome e Cognome RP">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="regRoblox" placeholder="Nome Roblox">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="regDiscord" placeholder="Nome Discord">
-                </div>
-                <button class="btn" style="width: 100%;" onclick="register()">REGISTRATI</button>
-            </div>
-
-            <div id="message" class="message"></div>
-            <div class="separator">⚜️ Bologna | RP ⚜️</div>
-        </div>
-
         <!-- Footer -->
         <footer>
             <p>© 2025 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
@@ -337,141 +242,134 @@
     </div>
 
     <script>
-        // API URL (Render)
-        const API_URL = "https://liberty-ita-api-1.onrender.com";
+        // ================= CONFIGURAZIONE =================
+        // Client ID Discord (GIÀ INSERITO)
+        const DISCORD_CLIENT_ID = "1489266190432997520";
         
-        // Invito Discord
+        // URL di reindirizzamento (cambia con il tuo dominio Vercel)
+        const REDIRECT_URI = encodeURIComponent("https://bologna-rp-site.vercel.app/callback.html");
+        
+        // URL di autorizzazione Discord
+        const DISCORD_AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify+guilds`;
+        
+        // API Render
+        const API_URL = "https://liberty-ita-api-1.onrender.com";
         const INVITE_CODE = "Gkj7Qdm63Z";
         
+        // ================= FUNZIONI =================
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('discord_token');
+            localStorage.removeItem('discord_user');
+            window.location.reload();
+        }
+        
+        // Login con Discord
+        function loginWithDiscord() {
+            window.location.href = DISCORD_AUTH_URL;
+        }
+        
+        // Carica la dashboard utente
+        async function loadUserArea() {
+            const token = localStorage.getItem('discord_token');
+            const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
+            const userArea = document.getElementById('userArea');
+            
+            if (token && user.id) {
+                // Utente loggato
+                const avatarUrl = user.avatar 
+                    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+                
+                // Verifica se è registrato nel database
+                let registrato = false;
+                let userData = null;
+                try {
+                    const response = await fetch(`${API_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ discord_name: user.username })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        registrato = true;
+                        userData = data.user;
+                    }
+                } catch (e) {
+                    console.error("Errore verifica registrazione:", e);
+                }
+                
+                userArea.innerHTML = `
+                    <div class="user-card">
+                        <img class="user-avatar" src="${avatarUrl}" alt="Avatar">
+                        <div class="user-name">${user.global_name || user.username}</div>
+                        <div class="user-discord">@${user.username}</div>
+                        <div>
+                            <span class="role-badge">✅ Autenticato con Discord</span>
+                            ${registrato ? '<span class="role-badge">🟣 Cittadino</span>' : '<span class="role-badge">🟡 Turista</span>'}
+                        </div>
+                        <div class="btn-group" style="margin-top: 20px;">
+                            <a href="dashboard.html" class="btn">📊 VAI ALLA DASHBOARD</a>
+                            <button onclick="logout()" class="btn btn-outline">🚪 ESCLUDI</button>
+                        </div>
+                        ${!registrato ? '<p style="margin-top: 15px; font-size: 0.8rem;">⚠️ Non sei registrato! Usa <code>/cittadinanza</code> su Discord.</p>' : ''}
+                    </div>
+                `;
+            } else {
+                // Utente non loggato
+                userArea.innerHTML = `
+                    <div class="user-card">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🔐</div>
+                        <h2>Area Personale</h2>
+                        <p>Accedi con Discord per accedere alla tua dashboard personale</p>
+                        <div class="btn-group" style="margin-top: 20px;">
+                            <button onclick="loginWithDiscord()" class="btn btn-discord">💬 ACCEDI CON DISCORD</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
         // Carica statistiche Discord
-        fetch(`https://discord.com/api/v9/invites/${INVITE_CODE}?with_counts=true`)
-            .then(res => res.json())
-            .then(data => {
+        async function loadServerStats() {
+            try {
+                const response = await fetch(`https://discord.com/api/v9/invites/${INVITE_CODE}?with_counts=true`);
+                const data = await response.json();
                 if (data.approximate_member_count) {
                     document.getElementById("member-count").innerText = data.approximate_member_count;
                 } else {
                     document.getElementById("member-count").innerText = "💚 Apri il server";
                 }
-            })
-            .catch(() => {
+            } catch (error) {
                 document.getElementById("member-count").innerText = "🔗 Unisciti a noi!";
-            });
-        
-        // Toggle tra Login e Register
-        document.getElementById("loginTab").addEventListener("click", () => {
-            document.getElementById("loginForm").classList.remove("hidden");
-            document.getElementById("registerForm").classList.add("hidden");
-            document.getElementById("loginTab").classList.add("active");
-            document.getElementById("registerTab").classList.remove("active");
-            document.getElementById("message").style.display = "none";
-        });
-        
-        document.getElementById("registerTab").addEventListener("click", () => {
-            document.getElementById("registerForm").classList.remove("hidden");
-            document.getElementById("loginForm").classList.add("hidden");
-            document.getElementById("registerTab").classList.add("active");
-            document.getElementById("loginTab").classList.remove("active");
-            document.getElementById("message").style.display = "none";
-        });
-        
-        // Scroll al form
-        document.getElementById("showFormBtn").addEventListener("click", (e) => {
-            e.preventDefault();
-            document.getElementById("form").scrollIntoView({ behavior: "smooth" });
-        });
-        
-        // Funzione Login
-        async function login() {
-            const discord = document.getElementById("loginDiscord").value;
-            const roblox = document.getElementById("loginRoblox").value;
-            const msgDiv = document.getElementById("message");
-            
-            if (!discord && !roblox) {
-                msgDiv.style.display = "block";
-                msgDiv.className = "message error";
-                msgDiv.innerHTML = "❌ Inserisci almeno Discord o Roblox";
-                return;
-            }
-            
-            msgDiv.style.display = "block";
-            msgDiv.className = "message info";
-            msgDiv.innerHTML = "⏳ Caricamento...";
-            
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ discord_name: discord, roblox_name: roblox })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                    msgDiv.className = "message success";
-                    msgDiv.innerHTML = `✅ Bentornato ${data.user.nome_rp}! Reindirizzamento...`;
-                    setTimeout(() => {
-                        window.location.href = "dashboard.html";
-                    }, 1500);
-                } else if (data.error === "Richiesta in attesa di approvazione") {
-                    msgDiv.className = "message info";
-                    msgDiv.innerHTML = `⏳ ${data.error}<br>Riceverai una notifica su Discord quando verrai approvato.`;
-                } else {
-                    msgDiv.className = "message error";
-                    msgDiv.innerHTML = `❌ ${data.error}`;
-                }
-            } catch (error) {
-                msgDiv.className = "message error";
-                msgDiv.innerHTML = "❌ Errore di connessione. Riprova più tardi.";
             }
         }
         
-        // Funzione Register
-        async function register() {
-            const nomeRP = document.getElementById("regNomeRP").value;
-            const roblox = document.getElementById("regRoblox").value;
-            const discord = document.getElementById("regDiscord").value;
-            const msgDiv = document.getElementById("message");
+        // Verifica se c'è un token nell'URL (dopo redirect OAuth)
+        function checkForToken() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
             
-            if (!nomeRP || !roblox || !discord) {
-                msgDiv.style.display = "block";
-                msgDiv.className = "message error";
-                msgDiv.innerHTML = "❌ Compila tutti i campi";
-                return;
-            }
-            
-            msgDiv.style.display = "block";
-            msgDiv.className = "message info";
-            msgDiv.innerHTML = "⏳ Invio richiesta...";
-            
-            try {
-                const response = await fetch(`${API_URL}/register`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        nome_rp: nomeRP,
-                        roblox_name: roblox,
-                        discord_name: discord
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    msgDiv.className = "message success";
-                    msgDiv.innerHTML = `✅ ${data.message}<br>Riceverai una notifica su Discord quando verrai approvato.`;
-                    document.getElementById("regNomeRP").value = "";
-                    document.getElementById("regRoblox").value = "";
-                    document.getElementById("regDiscord").value = "";
-                } else {
-                    msgDiv.className = "message error";
-                    msgDiv.innerHTML = `❌ ${data.error}`;
-                }
-            } catch (error) {
-                msgDiv.className = "message error";
-                msgDiv.innerHTML = "❌ Errore di connessione. Riprova più tardi.";
+            if (token) {
+                localStorage.setItem('discord_token', token);
+                fetch('https://discord.com/api/users/@me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                .then(res => res.json())
+                .then(user => {
+                    localStorage.setItem('discord_user', JSON.stringify(user));
+                    window.location.href = '/';
+                })
+                .catch(console.error);
             }
         }
+        
+        // ================= AVVIO =================
+        checkForToken();
+        loadServerStats();
+        loadUserArea();
     </script>
 
 </body>
