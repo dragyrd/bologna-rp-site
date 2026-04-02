@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accesso in corso...</title>
+    <style>
+        body {
+            background: #0a0f1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            margin: 0;
+        }
+        .loader {
+            text-align: center;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0,170,255,0.2);
+            border-top: 4px solid #00aaff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+        <h2>🎫 Accesso in corso...</h2>
+        <p>Verrai reindirizzato tra pochi secondi</p>
+    </div>
+
+    <script>
+        // Estrai il token dall'URL dopo il redirect
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
+        
+        if (token) {
+            // Salva il token nel localStorage
+            localStorage.setItem('discord_token', token);
+            
+            // Ottieni i dati dell'utente
+            fetch('https://discord.com/api/users/@me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(user => {
+                localStorage.setItem('discord_user', JSON.stringify(user));
+                // Reindirizza alla dashboard
+                window.location.href = '/dashboard.html';
+            })
+            .catch(err => {
+                console.error(err);
+                window.location.href = '/';
+            });
+        } else {
+            // Nessun token, torna alla home
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
