@@ -72,6 +72,8 @@
             text-decoration: none;
             font-weight: bold;
             transition: background 0.3s;
+            cursor: pointer;
+            display: inline-block;
         }
 
         .logout-btn:hover {
@@ -141,6 +143,8 @@
             margin: 5px 5px 0 0;
             font-size: 0.85rem;
             transition: background 0.3s;
+            border: none;
+            cursor: pointer;
         }
 
         .btn:hover {
@@ -198,7 +202,7 @@
         // API URL (Render)
         const API_URL = "https://liberty-ita-api-1.onrender.com";
         
-        // Logout
+        // Funzione logout
         function logout() {
             localStorage.removeItem('discord_token');
             localStorage.removeItem('discord_user');
@@ -248,7 +252,7 @@
                             <p>@${user.username} • ID: ${user.id}</p>
                         </div>
                     </div>
-                    <a href="#" onclick="logout()" class="logout-btn">🚪 ESCLUDI</a>
+                    <div onclick="logout()" class="logout-btn">🚪 ESCLUDI</div>
                 </div>
                 
                 <div class="dashboard-grid">
@@ -276,8 +280,8 @@
                     <div class="card">
                         <h3>⚡ AZIONI RAPIDE</h3>
                         <p><a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 Apri Discord</a></p>
-                        <p><a href="#" class="btn" onclick="window.location.href='/'">🏠 Torna alla Home</a></p>
-                        ${registrato ? `<p><a href="#" class="btn" onclick="alert('Funzionalità in sviluppo!')">📝 Gestisci Profilo</a></p>` : ''}
+                        <p><a href="/" class="btn">🏠 Torna alla Home</a></p>
+                        ${registrato ? `<p><button class="btn" onclick="alert('Funzionalità in sviluppo!')">📝 Gestisci Profilo</button></p>` : ''}
                     </div>
                 </div>
                 
@@ -285,7 +289,7 @@
                     <h3 style="color: #00aaff; margin-bottom: 15px;">🔗 LINK UTILI</h3>
                     <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">📜 Regolamento</a>
                     <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">🎫 Supporto Ticket</a>
-                    <a href="#" class="btn" onclick="alert('Shop in arrivo!')">🛒 Negozio</a>
+                    <button class="btn" onclick="alert('Shop in arrivo!')">🛒 Negozio</button>
                 </div>
             `;
             
