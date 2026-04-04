@@ -1,51 +1,410 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Bologna | RP</title>
     <style>
-        body {
-            background: #0a0f1a;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(10, 15, 26, 0.85), rgba(10, 15, 26, 0.9)), url('https://i.imgur.com/uI336Xj.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #eef2ff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(26, 31, 46, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #00aaff;
+        }
+
+        .user-details h2 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .saldo {
+            background: rgba(0,170,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
         .logout-btn {
             background: #ff5555;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
             border: none;
+        }
+
+        /* Pulsanti esterni */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: #00aaff;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-discord {
+            background: #5865F2;
+        }
+
+        .btn-discord:hover {
+            background: #4752c4;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Sezione Annunci */
+        .annunci-section {
+            background: rgba(26, 31, 46, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .annunci-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+        }
+
+        .annunci-header h2 {
+            color: #00aaff;
+        }
+
+        .admin-form {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .admin-form input, .admin-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #0f1420;
+            border: 1px solid #00aaff;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .admin-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .annunci-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .annuncio-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #00aaff;
+        }
+
+        .annuncio-titolo {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .annuncio-contenuto {
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .annuncio-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .delete-btn {
+            background: #ff5555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
             border-radius: 10px;
             cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; }
+            .user-info { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div id="dashboard">
-        <h1>Caricamento...</h1>
+
+    <div class="container">
+        <!-- Header con info utente -->
+        <div class="header" id="header">
+            <div class="user-info">
+                <img class="user-avatar" id="userAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
+                <div class="user-details">
+                    <h2 id="userName">Caricamento...</h2>
+                    <p id="userDiscord">@caricamento</p>
+                </div>
+            </div>
+            <div>
+                <span class="saldo" id="userSaldo">💰 0€</span>
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- Pulsanti Discord e Regolamento -->
+        <div class="btn-group">
+            <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
+            <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn">📜 REGOLAMENTO</a>
+        </div>
+
+        <!-- Sezione Annunci -->
+        <div class="annunci-section" id="annunciSection">
+            <div class="annunci-header">
+                <h2>📢 ANNUNCI UFFICIALI</h2>
+            </div>
+            <div id="adminFormContainer"></div>
+            <div id="annunciList" class="annunci-list">
+                <div style="text-align: center; padding: 20px;">Caricamento annunci...</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
+        </footer>
     </div>
 
     <script>
-        // Recupera la sessione salvata
+        // Recupera la sessione
         const session = JSON.parse(localStorage.getItem('session') || '{}');
         
+        // Verifica se loggato
         if (!session.nome_rp) {
-            // Se non loggato, torna alla home
             window.location.href = '/';
-        } else {
-            // Mostra dashboard
-            document.getElementById('dashboard').innerHTML = `
-                <h1>👋 Benvenuto, ${session.nome_rp}!</h1>
-                <p>Discord: ${session.discord_nome}</p>
-                <p>💰 Saldo: ${session.saldo}€</p>
-                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
-            `;
         }
         
+        // Variabili
+        let isAdmin = session.is_admin_web || false;
+        let annunci = [];
+        
+        // Mostra info utente
+        function loadUserInfo() {
+            document.getElementById('userName').innerText = session.nome_rp;
+            document.getElementById('userDiscord').innerHTML = `@${session.discord_nome}`;
+            document.getElementById('userSaldo').innerHTML = `💰 ${session.saldo}€`;
+            
+            // Avatar placeholder (Discord richiede token per avatar vero)
+            // Per ora lasciamo quello di default
+        }
+        
+        // Logout
         function logout() {
             localStorage.removeItem('session');
             window.location.href = '/';
         }
+        
+        // Carica annunci dal server
+        async function loadAnnunci() {
+            try {
+                const response = await fetch('/api/annunci');
+                const data = await response.json();
+                annunci = data;
+                renderAnnunci();
+            } catch (error) {
+                document.getElementById('annunciList').innerHTML = '<div style="text-align: center; padding: 20px;">❌ Errore caricamento annunci</div>';
+            }
+        }
+        
+        // Mostra form admin se l'utente è admin web
+        function showAdminForm() {
+            if (!isAdmin) return;
+            
+            document.getElementById('adminFormContainer').innerHTML = `
+                <div class="admin-form">
+                    <h3 style="color: #00aaff; margin-bottom: 15px;">✏️ NUOVO ANNUNCIO</h3>
+                    <input type="text" id="annuncioTitolo" placeholder="Titolo annuncio">
+                    <textarea id="annuncioContenuto" placeholder="Contenuto dell'annuncio..."></textarea>
+                    <button class="btn" onclick="pubblicaAnnuncio()">📢 PUBBLICA ANNUNCIO</button>
+                </div>
+            `;
+        }
+        
+        // Pubblica nuovo annuncio
+        async function pubblicaAnnuncio() {
+            const titolo = document.getElementById('annuncioTitolo').value;
+            const contenuto = document.getElementById('annuncioContenuto').value;
+            
+            if (!titolo || !contenuto) {
+                alert('Inserisci titolo e contenuto');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/annunci', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        titolo: titolo,
+                        contenuto: contenuto,
+                        autore: session.nome_rp,
+                        autore_discord_id: session.discord_id
+                    })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('annuncioTitolo').value = '';
+                    document.getElementById('annuncioContenuto').value = '';
+                    loadAnnunci();
+                } else {
+                    alert('Errore nella pubblicazione');
+                }
+            } catch (error) {
+                alert('Errore di connessione');
+            }
+        }
+        
+        // Elimina annuncio
+        async function eliminaAnnuncio(id) {
+            if (!confirm('Eliminare questo annuncio?')) return;
+            
+            try {
+                const response = await fetch('/api/annunci', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: id,
+                        autore_discord_id: session.discord_id
+                    })
+                });
+                
+                if (response.ok) {
+                    loadAnnunci();
+                } else {
+                    alert('Non autorizzato o errore');
+                }
+            } catch (error) {
+                alert('Errore di connessione');
+            }
+        }
+        
+        // Renderizza la lista annunci
+        function renderAnnunci() {
+            const container = document.getElementById('annunciList');
+            
+            if (!annunci || annunci.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Nessun annuncio presente.</div>';
+                return;
+            }
+            
+            let html = '';
+            for (const a of annunci) {
+                html += `
+                    <div class="annuncio-item">
+                        <div class="annuncio-titolo">${escapeHtml(a.titolo)}</div>
+                        <div class="annuncio-contenuto">${escapeHtml(a.contenuto)}</div>
+                        <div class="annuncio-footer">
+                            <span>📅 ${new Date(a.data).toLocaleString('it-IT')} | 👤 ${escapeHtml(a.autore)}</span>
+                            ${isAdmin ? `<button class="delete-btn" onclick="eliminaAnnuncio(${a.id})">🗑️ Elimina</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+        
+        // Helper escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Inizializza
+        loadUserInfo();
+        showAdminForm();
+        loadAnnunci();
     </script>
+
 </body>
 </html>
