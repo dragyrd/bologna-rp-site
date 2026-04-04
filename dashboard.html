@@ -27,7 +27,7 @@
             padding: 20px;
         }
 
-        /* Header con info utente */
+        /* Header */
         .header {
             background: rgba(26, 31, 46, 0.9);
             border-radius: 20px;
@@ -72,6 +72,14 @@
             font-size: 0.9rem;
         }
 
+        .role-badge {
+            background: rgba(0,170,255,0.15);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            margin-left: 10px;
+        }
+
         .logout-btn {
             background: #ff5555;
             color: white;
@@ -84,7 +92,7 @@
             font-size: 0.9rem;
         }
 
-        /* Barra categorie orizzontale */
+        /* Barra categorie */
         .categories-bar {
             background: rgba(26, 31, 46, 0.9);
             border-radius: 50px;
@@ -121,7 +129,7 @@
             color: white;
         }
 
-        /* Pulsanti Discord e Regolamento */
+        /* Pulsanti esterni */
         .btn-group {
             display: flex;
             justify-content: flex-end;
@@ -151,11 +159,24 @@
             background: #4752c4;
         }
 
+        .btn-danger {
+            background: #ff5555;
+        }
+
+        .btn-danger:hover {
+            background: #cc4444;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 0.75rem;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
         }
 
-        /* Sezione Annunci */
+        /* Annunci */
         .annunci-section {
             background: rgba(26, 31, 46, 0.7);
             border-radius: 20px;
@@ -241,7 +262,7 @@
             font-size: 0.7rem;
         }
 
-        /* Categoria Container (dinamico) */
+        /* Categoria Container */
         .category-container {
             background: rgba(26, 31, 46, 0.7);
             border-radius: 20px;
@@ -271,6 +292,70 @@
             font-size: 0.8rem;
         }
 
+        /* Sezioni categoria */
+        .category-subsection {
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .category-subsection h3 {
+            color: #00aaff;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .form-row {
+            margin-bottom: 15px;
+        }
+
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .form-row input, .form-row select, .form-row textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0f1420;
+            border: 1px solid #00aaff;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            background: #0f1420;
+            border: 1px solid #00aaff;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .data-table th {
+            color: #00aaff;
+        }
+
         footer {
             text-align: center;
             padding: 30px;
@@ -291,7 +376,7 @@
 <body>
 
     <div class="container">
-        <!-- Header con info utente -->
+        <!-- Header -->
         <div class="header" id="header">
             <div class="user-info">
                 <img class="user-avatar" id="userAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
@@ -302,42 +387,30 @@
             </div>
             <div>
                 <span class="saldo" id="userSaldo">💰 0€</span>
+                <span id="roleBadge" class="role-badge"></span>
                 <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             </div>
         </div>
 
-        <!-- Barra categorie orizzontale -->
+        <!-- Barra categorie -->
         <div class="categories-bar">
-            <button class="category-btn" onclick="showCategory('annunci')">📢 ANNUNCI</button>
-            <button class="category-btn" onclick="showCategory('fdo')">🚔 FDO</button>
-            <button class="category-btn" onclick="showCategory('cri')">🚑 CRI</button>
-            <button class="category-btn" onclick="showCategory('vdf')">🔥 VDF</button>
-            <button class="category-btn" onclick="showCategory('anas')">🛣️ ANAS</button>
-            <button class="category-btn" onclick="showCategory('concessionario')">🚗 CONCESSIONARIO</button>
-            <button class="category-btn" onclick="showCategory('agenzia')">🏠 AGENZIA</button>
+            <button class="category-btn active" onclick="showCategory('annunci', this)">📢 ANNUNCI</button>
+            <button class="category-btn" onclick="showCategory('fdo', this)">🚔 FDO</button>
+            <button class="category-btn" onclick="showCategory('cri', this)">🚑 CRI</button>
+            <button class="category-btn" onclick="showCategory('vdf', this)">🔥 VDF</button>
+            <button class="category-btn" onclick="showCategory('anas', this)">🛣️ ANAS</button>
+            <button class="category-btn" onclick="showCategory('concessionario', this)">🚗 CONCESSIONARIO</button>
+            <button class="category-btn" onclick="showCategory('agenzia', this)">🏠 AGENZIA</button>
         </div>
 
-        <!-- Pulsanti Discord e Regolamento -->
+        <!-- Pulsanti esterni -->
         <div class="btn-group">
             <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
             <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn">📜 REGOLAMENTO</a>
         </div>
 
         <!-- Contenuto principale -->
-        <div id="mainContent">
-            <!-- Sezione Annunci (visibile di default) -->
-            <div id="annunciView">
-                <div class="annunci-section">
-                    <div class="annunci-header">
-                        <h2>📢 ANNUNCI UFFICIALI</h2>
-                    </div>
-                    <div id="adminFormContainer"></div>
-                    <div id="annunciList" class="annunci-list">
-                        <div style="text-align: center; padding: 20px;">Caricamento annunci...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="mainContent"></div>
 
         <footer>
             <p>© 2026 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
@@ -346,14 +419,22 @@
 
     <script>
         // ================= VARIABILI =================
-        const session = JSON.parse(localStorage.getItem('session') || '{}');
-        let isAdmin = session.is_admin_web || false;
+        let session = null;
+        let userRuoli = [];
+        let isAdminWeb = false;
         let annunci = [];
-        let currentCategory = 'annunci';
 
-        // ================= VERIFICA LOGIN =================
-        if (!session.nome_rp) {
-            window.location.href = '/';
+        // ================= CARICA SESSIONE =================
+        function loadSession() {
+            const sessionData = localStorage.getItem('session');
+            if (!sessionData) {
+                window.location.href = '/';
+                return false;
+            }
+            session = JSON.parse(sessionData);
+            isAdminWeb = session.is_admin_web || false;
+            userRuoli = session.ruoli || ['cittadino'];
+            return true;
         }
 
         // ================= FUNZIONI UTILITY =================
@@ -369,6 +450,14 @@
             document.getElementById('userName').innerText = session.nome_rp;
             document.getElementById('userDiscord').innerHTML = `@${session.discord_nome}`;
             document.getElementById('userSaldo').innerHTML = `💰 ${session.saldo || 0}€`;
+            
+            let ruoloText = '👤 Cittadino';
+            if (userRuoli.includes('fdo')) ruoloText = '🚔 FDO';
+            else if (userRuoli.includes('cri')) ruoloText = '🚑 CRI';
+            else if (userRuoli.includes('vdf')) ruoloText = '🔥 VDF';
+            else if (userRuoli.includes('anas')) ruoloText = '🛣️ ANAS';
+            else if (userRuoli.includes('staff')) ruoloText = '🛠️ Staff';
+            document.getElementById('roleBadge').innerHTML = ruoloText;
         }
 
         // ================= LOGOUT =================
@@ -390,7 +479,7 @@
         }
 
         function showAdminForm() {
-            if (!isAdmin) return;
+            if (!isAdminWeb) return;
             document.getElementById('adminFormContainer').innerHTML = `
                 <div class="admin-form">
                     <h3 style="color: #00aaff; margin-bottom: 15px;">✏️ NUOVO ANNUNCIO</h3>
@@ -454,6 +543,7 @@
 
         function renderAnnunci() {
             const container = document.getElementById('annunciList');
+            if (!container) return;
             if (!annunci || annunci.length === 0) {
                 container.innerHTML = '<div style="text-align: center; padding: 20px;">Nessun annuncio presente.</div>';
                 return;
@@ -466,7 +556,7 @@
                         <div class="annuncio-contenuto">${escapeHtml(a.contenuto)}</div>
                         <div class="annuncio-footer">
                             <span>📅 ${new Date(a.data).toLocaleString('it-IT')} | 👤 ${escapeHtml(a.autore)}</span>
-                            ${isAdmin ? `<button class="delete-btn" onclick="eliminaAnnuncio(${a.id})">🗑️ Elimina</button>` : ''}
+                            ${isAdminWeb ? `<button class="delete-btn" onclick="eliminaAnnuncio(${a.id})">🗑️ Elimina</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -475,14 +565,12 @@
         }
 
         // ================= GESTIONE CATEGORIE =================
-        function showCategory(categoria) {
-            currentCategory = categoria;
-            
-            // Aggiorna classe active sui bottoni
+        function showCategory(categoria, btnElement) {
+            // Aggiorna classe active
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
             
             const mainContent = document.getElementById('mainContent');
             
@@ -491,22 +579,8 @@
                 return;
             }
             
-            let categoryHtml = `
-                <div class="category-container">
-                    <div class="category-header">
-                        <h2>${getCategoryTitle(categoria)}</h2>
-                        <span class="back-btn" onclick="showCategory('annunci')">← Torna agli Annunci</span>
-                    </div>
-                    <div id="categoryContent">
-                        <div style="text-align: center; padding: 40px;">
-                            <p>🚧 Sezione in costruzione...</p>
-                            <p style="font-size: 0.8rem; margin-top: 10px;">La funzionalità per ${getCategoryTitle(categoria)} sarà disponibile a breve.</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            mainContent.innerHTML = categoryHtml;
+            let contentHtml = getCategoryContent(categoria);
+            mainContent.innerHTML = contentHtml;
         }
 
         function showAnnunciView() {
@@ -525,10 +599,17 @@
                 </div>
             `;
             showAdminForm();
-            renderAnnunci();
+            loadAnnunci();
         }
 
-        function getCategoryTitle(categoria) {
+        function getCategoryContent(categoria) {
+            const isFdo = userRuoli.includes('fdo') || userRuoli.includes('staff');
+            const isCri = userRuoli.includes('cri') || userRuoli.includes('staff');
+            const isVdf = userRuoli.includes('vdf') || userRuoli.includes('staff');
+            const isAnas = userRuoli.includes('anas') || userRuoli.includes('staff');
+            const isConcessionario = userRuoli.includes('concessionario') || userRuoli.includes('staff');
+            const isAgenzia = userRuoli.includes('agenzia') || userRuoli.includes('staff');
+
             const titles = {
                 'fdo': '🚔 FORZE DELL\'ORDINE',
                 'cri': '🚑 CRI - CROCE ROSSA',
@@ -537,14 +618,273 @@
                 'concessionario': '🚗 CONCESSIONARIO',
                 'agenzia': '🏠 AGENZIA IMMOBILIARE'
             };
-            return titles[categoria] || categoria.toUpperCase();
+
+            if (categoria === 'fdo') {
+                return `
+                    <div class="category-container">
+                        <div class="category-header">
+                            <h2>${titles[categoria]}</h2>
+                            <span class="back-btn" onclick="showCategory('annunci', document.querySelector('.category-btn.active'))">← Torna agli Annunci</span>
+                        </div>
+                        
+                        <!-- Sezione Cittadini (visibile a tutti) -->
+                        <div class="category-subsection">
+                            <h3>📝 BANDO DI AMMISSIONE</h3>
+                            <p>Per entrare nelle Forze dell'Ordine, compila il modulo:</p>
+                            <a href="#" class="btn btn-sm" target="_blank">📋 COMPILA BANDO</a>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>📋 I TUOI PRECEDENTI</h3>
+                            <div id="precedentiList">
+                                <p style="color: #aaa;">Caricamento...</p>
+                            </div>
+                        </div>
+                        
+                        ${isFdo ? `
+                        <div class="category-subsection">
+                            <h3>🔍 DATABASE CITTADINI</h3>
+                            <div class="search-box">
+                                <input type="text" id="searchUser" placeholder="Cerca per nome RP o Discord...">
+                                <button class="btn btn-sm" onclick="cercaUtente()">🔍 Cerca</button>
+                            </div>
+                            <div id="searchResult"></div>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>💰 MULTA</h3>
+                            <div class="search-box">
+                                <input type="text" id="multaUser" placeholder="Nome RP o Discord del trasgressore">
+                                <input type="number" id="multaImporto" placeholder="Importo">
+                                <input type="text" id="multaMotivo" placeholder="Motivo">
+                                <button class="btn btn-sm" onclick="faiMulta()">💰 APPLICA MULTA</button>
+                            </div>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>🔒 ARRESTO</h3>
+                            <div class="search-box">
+                                <input type="text" id="arrestoUser" placeholder="Nome RP o Discord dell'arrestato">
+                                <input type="text" id="arrestoMotivo" placeholder="Motivo">
+                                <button class="btn btn-sm btn-danger" onclick="faiArresto()">🔒 ARRESTA</button>
+                            </div>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>🟢 SERVIZIO</h3>
+                            <button class="btn btn-sm" onclick="avviaServizio('fdo')">▶️ AVVIA SERVIZIO</button>
+                            <button class="btn btn-sm btn-danger" onclick="terminaServizio('fdo')">⏹️ TERMINA SERVIZIO</button>
+                        </div>
+                        ` : '<p style="color: #ffaa00;">⚠️ Non hai i permessi per accedere alle sezioni FDO. Se vuoi entrare nelle Forze dell\'Ordine, compila il bando!</p>'}
+                    </div>
+                `;
+            }
+            
+            if (categoria === 'cri') {
+                return `
+                    <div class="category-container">
+                        <div class="category-header">
+                            <h2>${titles[categoria]}</h2>
+                            <span class="back-btn" onclick="showCategory('annunci', document.querySelector('.category-btn.active'))">← Torna agli Annunci</span>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>📝 BANDO DI AMMISSIONE</h3>
+                            <p>Per entrare nella Croce Rossa, compila il modulo:</p>
+                            <a href="#" class="btn btn-sm" target="_blank">📋 COMPILA BANDO</a>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>📋 LA TUA CARTELLA SANITARIA</h3>
+                            <div id="cartellaSanitaria">
+                                <p style="color: #aaa;">Nessuna informazione disponibile.</p>
+                            </div>
+                        </div>
+                        
+                        ${isCri ? `
+                        <div class="category-subsection">
+                            <h3>🟢 SERVIZIO</h3>
+                            <button class="btn btn-sm" onclick="avviaServizio('cri')">▶️ AVVIA SERVIZIO</button>
+                            <button class="btn btn-sm btn-danger" onclick="terminaServizio('cri')">⏹️ TERMINA SERVIZIO</button>
+                        </div>
+                        ` : '<p style="color: #ffaa00;">⚠️ Non hai i permessi per accedere alle sezioni CRI.</p>'}
+                    </div>
+                `;
+            }
+            
+            if (categoria === 'vdf') {
+                return `
+                    <div class="category-container">
+                        <div class="category-header">
+                            <h2>${titles[categoria]}</h2>
+                            <span class="back-btn" onclick="showCategory('annunci', document.querySelector('.category-btn.active'))">← Torna agli Annunci</span>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>📝 BANDO DI AMMISSIONE</h3>
+                            <p>Per entrare nei Vigili del Fuoco, compila il modulo:</p>
+                            <a href="#" class="btn btn-sm" target="_blank">📋 COMPILA BANDO</a>
+                        </div>
+                        
+                        ${isVdf ? `
+                        <div class="category-subsection">
+                            <h3>📝 VERBALI INCENDI</h3>
+                            <textarea id="verbaleIncendio" placeholder="Scrivi il verbale..." rows="4"></textarea>
+                            <button class="btn btn-sm" onclick="salvaVerbale()">💾 SALVA VERBALE</button>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>🟢 SERVIZIO</h3>
+                            <button class="btn btn-sm" onclick="avviaServizio('vdf')">▶️ AVVIA SERVIZIO</button>
+                            <button class="btn btn-sm btn-danger" onclick="terminaServizio('vdf')">⏹️ TERMINA SERVIZIO</button>
+                        </div>
+                        ` : '<p style="color: #ffaa00;">⚠️ Non hai i permessi per accedere alle sezioni VDF.</p>'}
+                    </div>
+                `;
+            }
+            
+            if (categoria === 'anas') {
+                return `
+                    <div class="category-container">
+                        <div class="category-header">
+                            <h2>${titles[categoria]}</h2>
+                            <span class="back-btn" onclick="showCategory('annunci', document.querySelector('.category-btn.active'))">← Torna agli Annunci</span>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>📝 BANDO DI AMMISSIONE</h3>
+                            <p>Per entrare in ANAS, compila il modulo:</p>
+                            <a href="#" class="btn btn-sm" target="_blank">📋 COMPILA BANDO</a>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>⚠️ AVVISI LAVORI</h3>
+                            <div id="avvisiLavori">
+                                <p style="color: #aaa;">Nessun avviso attivo.</p>
+                            </div>
+                        </div>
+                        
+                        ${isAnas ? `
+                        <div class="category-subsection">
+                            <h3>🟢 SERVIZIO</h3>
+                            <button class="btn btn-sm" onclick="avviaServizio('anas')">▶️ AVVIA SERVIZIO</button>
+                            <button class="btn btn-sm btn-danger" onclick="terminaServizio('anas')">⏹️ TERMINA SERVIZIO</button>
+                        </div>
+                        ` : '<p style="color: #ffaa00;">⚠️ Non hai i permessi per accedere alle sezioni ANAS.</p>'}
+                    </div>
+                `;
+            }
+            
+            if (categoria === 'concessionario') {
+                return `
+                    <div class="category-container">
+                        <div class="category-header">
+                            <h2>${titles[categoria]}</h2>
+                            <span class="back-btn" onclick="showCategory('annunci', document.querySelector('.category-btn.active'))">← Torna agli Annunci</span>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>📝 BANDO DI AMMISSIONE</h3>
+                            <p>Per lavorare in Concessionario, compila il modulo:</p>
+                            <a href="#" class="btn btn-sm" target="_blank">📋 COMPILA BANDO</a>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>🚗 LISTINO PREZZI</h3>
+                            <a href="#" class="btn btn-sm" target="_blank">📄 APRI LISTINO</a>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>🎫 NUOVO TICKET</h3>
+                            <input type="text" id="ticketAuto" placeholder="Modello auto desiderata">
+                            <input type="text" id="ticketColore" placeholder="Colore">
+                            <textarea id="ticketMessaggio" placeholder="Messaggio..."></textarea>
+                            <button class="btn btn-sm" onclick="creaTicket('concessionario')">📩 CREA TICKET</button>
+                        </div>
+                        
+                        ${isConcessionario ? `
+                        <div class="category-subsection">
+                            <h3>📋 TICKET APERTI</h3>
+                            <div id="ticketList">Caricamento...</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            if (categoria === 'agenzia') {
+                return `
+                    <div class="category-container">
+                        <div class="category-header">
+                            <h2>${titles[categoria]}</h2>
+                            <span class="back-btn" onclick="showCategory('annunci', document.querySelector('.category-btn.active'))">← Torna agli Annunci</span>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>📝 BANDO DI AMMISSIONE</h3>
+                            <p>Per lavorare in Agenzia Immobiliare, compila il modulo:</p>
+                            <a href="#" class="btn btn-sm" target="_blank">📋 COMPILA BANDO</a>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>🏠 LISTINO PREZZI CASE</h3>
+                            <a href="#" class="btn btn-sm" target="_blank">📄 APRI LISTINO</a>
+                        </div>
+                        
+                        <div class="category-subsection">
+                            <h3>🎫 NUOVO TICKET</h3>
+                            <input type="text" id="ticketCasa" placeholder="Civico desiderato">
+                            <textarea id="ticketMessaggioCasa" placeholder="Messaggio..."></textarea>
+                            <button class="btn btn-sm" onclick="creaTicket('agenzia')">📩 CREA TICKET</button>
+                        </div>
+                        
+                        ${isAgenzia ? `
+                        <div class="category-subsection">
+                            <h3>📋 TICKET APERTI</h3>
+                            <div id="ticketListAgenzia">Caricamento...</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            return `<div class="category-container"><div style="text-align:center; padding:40px;">🚧 Sezione in costruzione...</div></div>`;
+        }
+
+        // ================= FUNZIONI API (da implementare con Supabase) =================
+        async function cercaUtente() {
+            alert('Funzionalità in sviluppo: cerca utente nel database');
+        }
+        
+        async function faiMulta() {
+            alert('Funzionalità in sviluppo: applica multa');
+        }
+        
+        async function faiArresto() {
+            alert('Funzionalità in sviluppo: arresta utente');
+        }
+        
+        async function avviaServizio(dipartimento) {
+            alert(`Servizio ${dipartimento.toUpperCase()} avviato!`);
+        }
+        
+        async function terminaServizio(dipartimento) {
+            alert(`Servizio ${dipartimento.toUpperCase()} terminato!`);
+        }
+        
+        async function salvaVerbale() {
+            alert('Verbale salvato!');
+        }
+        
+        async function creaTicket(tipo) {
+            alert(`Ticket ${tipo} creato!`);
         }
 
         // ================= INIZIALIZZAZIONE =================
-        loadUserInfo();
-        loadAnnunci().then(() => {
-            showAdminForm();
-        });
+        if (loadSession()) {
+            loadUserInfo();
+            showAnnunciView();
+        }
     </script>
 
 </body>
