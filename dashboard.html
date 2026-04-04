@@ -418,11 +418,88 @@
     </div>
 
     <script>
+        
         // ================= VARIABILI =================
-        let session = null;
-        let userRuoli = [];
-        let isAdminWeb = false;
-        let annunci = [];
+let refreshInterval = null;
+let currentRuoli = [];
+
+// ================= AGGIORNA RUOLI IN TEMPO REALE =================
+async function aggiornaRuoli() {
+    const token = localStorage.getItem('discord_token');
+    const userId = localStorage.getItem('discord_user_id');
+    
+    if (!token || !userId) return;
+    
+    try {
+        // Ottieni i ruoli aggiornati da Discord
+        const response = await fetch(`https://discord.com/api/guilds/1465791443493851310/members/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            const member = await response.json();
+            
+            if (member && member.roles) {
+                const ROLE_MAP = {
+                    '1473322686301344006': 'fdo',
+                    '1473323314138190038': 'cri',
+                    '1489181994855432282': 'vdf',
+                    '1473322697189490943': 'anas',
+                    '1473323081102524500': 'concessionario',
+                    '1473323100476014723': 'agenzia',
+                    '1473318063377219717': 'staff'
+                };
+                
+                const nuoviRuoli = member.roles
+                    .filter(roleId => ROLE_MAP[roleId])
+                    .map(roleId => ROLE_MAP[roleId]);
+                
+                // Confronta con i ruoli attuali
+                const ruoliAttuali = JSON.parse(localStorage.getItem('discord_roles') || '["cittadino"]');
+                const sonoCambiati = JSON.stringify(nuoviRuoli) !== JSON.stringify(ruoliAttuali);
+                
+                if (sonoCambiati) {
+                    console.log('🔄 Ruoli aggiornati:', nuoviRuoli);
+                    localStorage.setItem('discord_roles', JSON.stringify(nuoviRuoli));
+                    
+                    // Aggiorna anche la sessione
+                    const session = JSON.parse(localStorage.getItem('session') || '{}');
+                    session.ruoli = nuoviRuoli;
+                    localStorage.setItem('session', JSON.stringify(session));
+                    
+                    // Ricarica la dashboard per mostrare i nuovi permessi
+                    location.reload();
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Errore aggiornamento ruoli:', error);
+    }
+}
+
+// ================= AVVIA REFRESH PERIODICO =================
+function avviaRefreshRuoli() {
+    if (refreshInterval) clearInterval(refreshInterval);
+    // Controlla ogni 30 secondi
+    refreshInterval = setInterval(aggiornaRuoli, 30000);
+}
+
+// ================= FERMA REFRESH =================
+function fermaRefreshRuoli() {
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+        refreshInterval = null;
+    }
+}
+
+// ================= ALL'AVVIO =================
+// Avvia il refresh periodico
+avviaRefreshRuoli();
+
+// Alla chiusura della pagina, ferma il refresh
+window.addEventListener('beforeunload', function() {
+    fermaRefreshRuoli();
+});
 
         // ================= CARICA SESSIONE =================
         function loadSession() {
