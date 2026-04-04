@@ -99,12 +99,35 @@
             border-radius: 20px;
             padding: 25px;
         }
+        .admin-form {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .admin-form input, .admin-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #0f1420;
+            border: 1px solid #00aaff;
+            border-radius: 10px;
+            color: white;
+        }
         .annuncio-item {
             background: rgba(0,0,0,0.3);
             border-radius: 15px;
             padding: 15px;
             margin-bottom: 15px;
             border-left: 3px solid #00aaff;
+        }
+        .annuncio-titolo { font-weight: bold; margin-bottom: 8px; }
+        .annuncio-contenuto { color: #ccc; margin-bottom: 10px; }
+        .annuncio-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #888;
         }
         .delete-btn {
             background: #ff5555;
@@ -150,7 +173,7 @@
         <button class="category-btn" onclick="showCategory('agenzia', this)">🏠 AGENZIA</button>
     </div>
 
-    <div class="btn-group" style="display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 20px;">
         <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
         <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn">📜 REGOLAMENTO</a>
     </div>
@@ -171,11 +194,18 @@
     document.getElementById('userDiscord').innerHTML = `@${session.discord_nome}`;
     document.getElementById('userSaldo').innerHTML = `💰 ${session.saldo || 0}€`;
     
+    // Avatar Discord
+    if (localStorage.getItem('discord_user_avatar')) {
+        const avatarId = localStorage.getItem('discord_user_avatar');
+        document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${session.discord_id}/${avatarId}.png`;
+    }
+    
     function logout() {
         localStorage.clear();
         window.location.href = '/';
     }
     
+    // Aggiorna ruoli ogni 30 secondi
     async function aggiornaRuoli() {
         try {
             const res = await fetch(`${API_URL}/user-roles?discord_id=${session.discord_id}`);
@@ -190,18 +220,22 @@
     }
     setInterval(aggiornaRuoli, 30000);
     
+    // Annunci
     async function loadAnnunci() {
         const res = await fetch(`${API_URL}/annunci`);
         const annunci = await res.json();
         const container = document.getElementById('annunciList');
-        if (!annunci.length) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nessun annuncio</div>'; return; }
+        if (!annunci || annunci.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px;">Nessun annuncio</div>';
+            return;
+        }
         let html = '';
         for (let a of annunci) {
             html += `<div class="annuncio-item">
-                <div class="annuncio-titolo">${a.titolo}</div>
-                <div class="annuncio-contenuto">${a.contenuto}</div>
+                <div class="annuncio-titolo">${escapeHtml(a.titolo)}</div>
+                <div class="annuncio-contenuto">${escapeHtml(a.contenuto)}</div>
                 <div class="annuncio-footer">
-                    <span>📅 ${new Date(a.data).toLocaleString('it-IT')} | 👤 ${a.autore}</span>
+                    <span>📅 ${new Date(a.data).toLocaleString('it-IT')} | 👤 ${escapeHtml(a.autore)}</span>
                     ${isAdminWeb ? `<button class="delete-btn" onclick="eliminaAnnuncio(${a.id})">🗑️ Elimina</button>` : ''}
                 </div>
             </div>`;
@@ -209,32 +243,21 @@
         container.innerHTML = html;
     }
     
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
     async function eliminaAnnuncio(id) {
-        if (!confirm('Eliminare?')) return;
+        if (!confirm('Eliminare questo annuncio?')) return;
         await fetch(`${API_URL}/annunci`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id, autore_discord_id: session.discord_id })
         });
         loadAnnunci();
-    }
-    
-    function showCategory(cat, btn) {
-        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-        const main = document.getElementById('mainContent');
-        if (cat === 'annunci') {
-            main.innerHTML = `<div class="annunci-section"><div class="annunci-header"><h2>📢 ANNUNCI UFFICIALI</h2></div>
-                ${isAdminWeb ? `<div class="admin-form"><input id="titolo" placeholder="Titolo"><textarea id="contenuto" placeholder="Contenuto"></textarea><button class="btn" onclick="pubblicaAnnuncio()">📢 PUBBLICA</button></div>` : ''}
-                <div id="annunciList">Caricamento...</div></div>`;
-            loadAnnunci();
-        } else {
-            main.innerHTML = `<div style="background:rgba(26,31,46,0.7); border-radius:20px; padding:25px; text-align:center;">
-                <h2 style="color:#00aaff;">${cat.toUpperCase()}</h2>
-                <p style="margin-top:20px;">🚧 Sezione in costruzione...</p>
-                <p>Questa funzionalità sarà disponibile a breve.</p>
-            </div>`;
-        }
     }
     
     window.pubblicaAnnuncio = async function() {
@@ -244,13 +267,67 @@
         await fetch(`${API_URL}/annunci`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ titolo, contenuto, autore: session.nome_rp, autore_discord_id: session.discord_id })
+            body: JSON.stringify({
+                titolo, contenuto,
+                autore: session.nome_rp,
+                autore_discord_id: session.discord_id
+            })
         });
         document.getElementById('titolo').value = '';
         document.getElementById('contenuto').value = '';
         loadAnnunci();
     };
     
+    function showCategory(cat, btn) {
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        const main = document.getElementById('mainContent');
+        
+        if (cat === 'annunci') {
+            main.innerHTML = `
+                <div class="annunci-section">
+                    <div class="annunci-header"><h2>📢 ANNUNCI UFFICIALI</h2></div>
+                    ${isAdminWeb ? `
+                        <div class="admin-form">
+                            <input type="text" id="titolo" placeholder="Titolo annuncio">
+                            <textarea id="contenuto" placeholder="Contenuto annuncio..."></textarea>
+                            <button class="btn" onclick="pubblicaAnnuncio()">📢 PUBBLICA ANNUNCIO</button>
+                        </div>
+                    ` : ''}
+                    <div id="annunciList">Caricamento...</div>
+                </div>
+            `;
+            loadAnnunci();
+        } else {
+            const hasAccess = userRuoli.includes(cat) || userRuoli.includes('staff');
+            main.innerHTML = `
+                <div style="background:rgba(26,31,46,0.7); border-radius:20px; padding:25px; text-align:center;">
+                    <h2 style="color:#00aaff;">${getCategoryTitle(cat)}</h2>
+                    ${hasAccess ? `
+                        <p style="margin-top:20px;">✅ Hai accesso a questa sezione.</p>
+                        <p>Funzionalità in sviluppo...</p>
+                    ` : `
+                        <p style="margin-top:20px; color:#ffaa00;">⚠️ Non hai i permessi per accedere a questa sezione.</p>
+                        <p>Per accedere, devi avere il ruolo corrispondente su Discord.</p>
+                    `}
+                </div>
+            `;
+        }
+    }
+    
+    function getCategoryTitle(cat) {
+        const titles = {
+            'fdo': '🚔 FORZE DELL\'ORDINE',
+            'cri': '🚑 CRI - CROCE ROSSA',
+            'vdf': '🔥 VDF - VIGILI DEL FUOCO',
+            'anas': '🛣️ ANAS - VIABILITÀ',
+            'concessionario': '🚗 CONCESSIONARIO',
+            'agenzia': '🏠 AGENZIA IMMOBILIARE'
+        };
+        return titles[cat] || cat.toUpperCase();
+    }
+    
+    // Avvia con la sezione annunci
     showCategory('annunci');
 </script>
 </body>
