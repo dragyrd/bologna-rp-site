@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(rgba(10, 15, 26, 0.85), rgba(10, 15, 26, 0.9)), url('https://i.ibb.co/wNhKTfzq/LOGO.png');
+            background: linear-gradient(rgba(10, 15, 26, 0.85), rgba(10, 15, 26, 0.9)), url('https://i.imgur.com/uI336Xj.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -94,14 +94,6 @@
             background: #00aaff;
         }
 
-        .btn-danger {
-            background: #ff5555;
-        }
-
-        .btn-danger:hover {
-            background: #cc4444;
-        }
-
         .btn:hover {
             transform: translateY(-3px);
         }
@@ -139,97 +131,62 @@
             margin-bottom: 10px;
         }
 
-        /* Sezione Annunci */
-        .annunci-section {
-            margin: 40px 0;
-            background: rgba(26, 31, 46, 0.7);
-            border-radius: 20px;
-            padding: 25px;
+        /* Login Form */
+        .login-card {
+            max-width: 450px;
+            margin: 40px auto;
+            background: rgba(26, 31, 46, 0.95);
+            border-radius: 30px;
+            padding: 35px;
+            text-align: center;
             backdrop-filter: blur(5px);
         }
 
-        .annunci-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 15px;
-        }
-
-        .annunci-header h2 {
+        .login-card h2 {
             color: #00aaff;
+            margin-bottom: 25px;
         }
 
-        .annunci-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .annuncio-item {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 3px solid #00aaff;
-        }
-
-        .annuncio-titolo {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .annuncio-contenuto {
-            color: #ccc;
-            margin-bottom: 10px;
-        }
-
-        .annuncio-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: #888;
-        }
-
-        .delete-annuncio {
-            background: #ff5555;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.7rem;
-        }
-
-        .delete-annuncio:hover {
-            background: #cc4444;
-        }
-
-        /* Form Annuncio (solo admin) */
-        .admin-form {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .admin-form input, .admin-form textarea {
+        .login-card input {
             width: 100%;
             padding: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             background: #0f1420;
             border: 1px solid #00aaff;
             border-radius: 10px;
             color: white;
+            font-size: 1rem;
         }
 
-        .admin-form textarea {
-            resize: vertical;
-            min-height: 80px;
+        .login-card input:focus {
+            outline: none;
+            border-color: #33ccff;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.error {
+            background: rgba(255,85,85,0.2);
+            border: 1px solid #ff5555;
+            color: #ff5555;
+        }
+
+        .message.success {
+            background: rgba(85,255,85,0.2);
+            border: 1px solid #55ff55;
+            color: #55ff55;
+        }
+
+        .message.info {
+            background: rgba(255,170,0,0.2);
+            border: 1px solid #ffaa00;
+            color: #ffaa00;
         }
 
         /* Server stats */
@@ -247,45 +204,6 @@
             font-size: 2rem;
             font-weight: bold;
             margin: 10px 0;
-        }
-
-        /* User card */
-        .user-card {
-            max-width: 500px;
-            margin: 40px auto;
-            background: rgba(26, 31, 46, 0.95);
-            border-radius: 30px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            border: 3px solid #00aaff;
-        }
-
-        .user-name {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .user-discord {
-            color: #aaa;
-            margin-bottom: 20px;
-        }
-
-        .role-badge {
-            display: inline-block;
-            background: rgba(0,170,255,0.2);
-            color: #00aaff;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            margin: 5px;
         }
 
         /* Footer */
@@ -312,11 +230,20 @@
             <div class="game-code">🎮 Codice in-game: <strong>nDCjR</strong></div>
         </div>
 
-        <!-- Area utente -->
-        <div id="userArea"></div>
+        <!-- Pulsanti esterni -->
+        <div class="btn-group">
+            <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
+            <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn">📜 REGOLAMENTO</a>
+        </div>
 
-        <!-- Sezione Annunci -->
-        <div id="annunciSection" class="annunci-section"></div>
+        <!-- Login Form -->
+        <div class="login-card">
+            <h2>🔐 ACCEDI AL TUO PERSONAGGIO</h2>
+            <input type="text" id="loginNomeRP" placeholder="Nome e Cognome RP">
+            <input type="text" id="loginDiscord" placeholder="Nome Discord">
+            <button class="btn" style="width: 100%;" onclick="login()">ACCEDI</button>
+            <div id="message" class="message"></div>
+        </div>
 
         <!-- Statistiche server -->
         <div class="server-stats" id="server-stats">
@@ -352,205 +279,65 @@
         <!-- Footer -->
         <footer>
             <p>© 2026 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
-            <p>🎮 Codice ER:LC: <strong>nDCjR</strong> | <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" style="color: #00aaff;">📜 Regolamento</a></p>
+            <p>🎮 Codice ER:LC: <strong>nDCjR</strong></p>
         </footer>
     </div>
 
     <script>
         // ================= CONFIGURAZIONE =================
-        const DISCORD_CLIENT_ID = "1489266190432997520";
-        const REDIRECT_URI = encodeURIComponent(window.location.origin + "/callback.html");
-        const DISCORD_AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify`;
-        
         const INVITE_CODE = "Gkj7Qdm63Z";
         
-        // ================= GESTIONE ANNUNCI =================
-        let annunci = [];
+        // ================= FUNZIONI =================
         
-        // Carica annunci dal localStorage
-        function loadAnnunci() {
-            const saved = localStorage.getItem('bologna_annunci');
-            if (saved) {
-                annunci = JSON.parse(saved);
-            } else {
-                // Annunci di esempio
-                annunci = [
-                    {
-                        id: Date.now(),
-                        titolo: "🎉 Benvenuto su Bologna | RP!",
-                        contenuto: "Siamo felici di averti nella nostra community! Leggi il regolamento e divertiti.",
-                        data: new Date().toLocaleString('it-IT'),
-                        autore: "Staff"
-                    }
-                ];
-                saveAnnunci();
-            }
-            renderAnnunci();
-        }
-        
-        // Salva annunci nel localStorage
-        function saveAnnunci() {
-            localStorage.setItem('bologna_annunci', JSON.stringify(annunci));
-        }
-        
-        // Aggiungi annuncio
-        function aggiungiAnnuncio(titolo, contenuto, autore) {
-            const nuovoAnnuncio = {
-                id: Date.now(),
-                titolo: titolo,
-                contenuto: contenuto,
-                data: new Date().toLocaleString('it-IT'),
-                autore: autore
-            };
-            annunci.unshift(nuovoAnnuncio);
-            saveAnnunci();
-            renderAnnunci();
-        }
-        
-        // Elimina annuncio
-        function eliminaAnnuncio(id) {
-            annunci = annunci.filter(a => a.id !== id);
-            saveAnnunci();
-            renderAnnunci();
-        }
-        
-        // Renderizza annunci
-        function renderAnnunci() {
-            const section = document.getElementById('annunciSection');
-            if (!section) return;
+        // Mostra messaggio
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.innerHTML = text;
+            msgDiv.className = 'message ' + type;
+            msgDiv.style.display = 'block';
             
-            if (annunci.length === 0) {
-                section.innerHTML = `
-                    <div class="annunci-header">
-                        <h2>📢 ANNUNCI UFFICIALI</h2>
-                    </div>
-                    <div style="text-align: center; padding: 40px; color: #888;">
-                        Nessun annuncio al momento.
-                    </div>
-                `;
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Login
+        async function login() {
+            const nomeRP = document.getElementById('loginNomeRP').value;
+            const discordNome = document.getElementById('loginDiscord').value;
+            
+            if (!nomeRP || !discordNome) {
+                showMessage('❌ Inserisci tutti i campi', 'error');
                 return;
             }
             
-            let annunciHtml = `
-                <div class="annunci-header">
-                    <h2>📢 ANNUNCI UFFICIALI</h2>
-                </div>
-                <div class="annunci-list">
-            `;
+            showMessage('⏳ Verifica in corso...', 'info');
             
-            for (const a of annunci) {
-                annunciHtml += `
-                    <div class="annuncio-item" data-id="${a.id}">
-                        <div class="annuncio-titolo">${escapeHtml(a.titolo)}</div>
-                        <div class="annuncio-contenuto">${escapeHtml(a.contenuto)}</div>
-                        <div class="annuncio-footer">
-                            <span>📅 ${a.data} | 👤 ${escapeHtml(a.autore)}</span>
-                            <button class="delete-annuncio" onclick="if(confirm('Eliminare questo annuncio?')) eliminaAnnuncio(${a.id})">🗑️ Elimina</button>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            annunciHtml += `</div>`;
-            section.innerHTML = annunciHtml;
-        }
-        
-        // Helper per escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // ================= FUNZIONI UTILITY =================
-        function logout() {
-            localStorage.removeItem('discord_token');
-            localStorage.removeItem('discord_user');
-            window.location.reload();
-        }
-        
-        function loginWithDiscord() {
-            window.location.href = DISCORD_AUTH_URL;
-        }
-        
-        // Verifica se l'utente è admin (staff o ha ruoli amministrativi)
-        function isAdmin(user) {
-            // Per ora, considera admin chiunque abbia un ID specifico o puoi espandere
-            // In futuro puoi controllare i ruoli Discord
-            const adminIds = []; // Aggiungi qui gli ID Discord degli admin
-            return adminIds.includes(user.id);
-        }
-        
-        // Carica l'area utente
-        async function loadUserArea() {
-            const token = localStorage.getItem('discord_token');
-            const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
-            const userArea = document.getElementById('userArea');
-            
-            if (token && user.id) {
-                const avatarUrl = user.avatar 
-                    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-                    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome_rp: nomeRP, discord_nome: discordNome })
+                });
                 
-                const isUserAdmin = isAdmin(user);
+                const data = await response.json();
                 
-                // Mostra form admin solo se l'utente è admin
-                let adminFormHtml = '';
-                if (isUserAdmin) {
-                    adminFormHtml = `
-                        <div class="admin-form">
-                            <h3 style="color: #00aaff; margin-bottom: 15px;">✏️ NUOVO ANNUNCIO (Staff)</h3>
-                            <input type="text" id="annuncioTitolo" placeholder="Titolo annuncio">
-                            <textarea id="annuncioContenuto" placeholder="Contenuto dell'annuncio..."></textarea>
-                            <button class="btn" style="width: auto; padding: 10px 20px;" onclick="pubblicaAnnuncio()">📢 PUBBLICA ANNUNCIO</button>
-                        </div>
-                    `;
+                if (data.success) {
+                    // Salva la sessione
+                    localStorage.setItem('session', JSON.stringify(data.session));
+                    showMessage('✅ Login riuscito! Reindirizzamento...', 'success');
+                    
+                    // Reindirizza alla dashboard
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 1500);
+                } else {
+                    showMessage('❌ ' + data.error, 'error');
                 }
-                
-                userArea.innerHTML = `
-                    <div class="user-card">
-                        <img class="user-avatar" src="${avatarUrl}" alt="Avatar">
-                        <div class="user-name">${user.global_name || user.username}</div>
-                        <div class="user-discord">@${user.username}</div>
-                        <div>
-                            <span class="role-badge">✅ Autenticato con Discord</span>
-                        </div>
-                        <div class="btn-group" style="margin-top: 20px;">
-                            <button onclick="logout()" class="btn btn-outline">🚪 ESCLUDI</button>
-                        </div>
-                    </div>
-                    ${adminFormHtml}
-                `;
-            } else {
-                userArea.innerHTML = `
-                    <div class="user-card">
-                        <div style="font-size: 2rem;">🔐</div>
-                        <h2>Area Personale</h2>
-                        <p>Accedi con Discord per accedere alla tua dashboard personale</p>
-                        <div class="btn-group" style="margin-top: 20px;">
-                            <button onclick="loginWithDiscord()" class="btn btn-discord">💬 ACCEDI CON DISCORD</button>
-                        </div>
-                    </div>
-                `;
+            } catch (error) {
+                console.error('Errore:', error);
+                showMessage('❌ Errore di connessione al server', 'error');
             }
-        }
-        
-        // Pubblica annuncio (chiamato dal form admin)
-        function pubblicaAnnuncio() {
-            const titolo = document.getElementById('annuncioTitolo')?.value;
-            const contenuto = document.getElementById('annuncioContenuto')?.value;
-            const user = JSON.parse(localStorage.getItem('discord_user') || '{}');
-            
-            if (!titolo || !contenuto) {
-                alert('Inserisci sia titolo che contenuto');
-                return;
-            }
-            
-            aggiungiAnnuncio(titolo, contenuto, user.global_name || user.username);
-            
-            // Pulisci form
-            document.getElementById('annuncioTitolo').value = '';
-            document.getElementById('annuncioContenuto').value = '';
         }
         
         // Carica statistiche Discord
@@ -568,31 +355,31 @@
             }
         }
         
-        // Verifica token nell'URL dopo redirect
-        function checkForToken() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-            
-            if (token) {
-                localStorage.setItem('discord_token', token);
-                fetch('https://discord.com/api/users/@me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                })
-                .then(res => res.json())
-                .then(user => {
-                    localStorage.setItem('discord_user', JSON.stringify(user));
-                    window.location.href = window.location.origin;
-                })
-                .catch(console.error);
+        // Controlla se l'utente è già loggato
+        function checkExistingSession() {
+            const session = localStorage.getItem('session');
+            if (session) {
+                const sessionData = JSON.parse(session);
+                // Se la sessione non è scaduta (24 ore)
+                if (sessionData.login_time && (Date.now() - sessionData.login_time) < 86400000) {
+                    window.location.href = '/dashboard.html';
+                } else {
+                    localStorage.removeItem('session');
+                }
             }
         }
         
         // ================= AVVIO =================
-        checkForToken();
+        checkExistingSession();
         loadServerStats();
-        loadUserArea();
-        loadAnnunci();
+        
+        // Aggiungi evento Invio sulla tastiera
+        document.getElementById('loginDiscord').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
+        document.getElementById('loginNomeRP').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
     </script>
 
 </body>
