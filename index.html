@@ -45,16 +45,6 @@
             margin-bottom: 30px;
         }
 
-        .game-code {
-            background: rgba(0,0,0,0.5);
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-family: monospace;
-            font-size: 1.2rem;
-            margin-top: 10px;
-        }
-
         /* Pulsanti */
         .btn-group {
             display: flex;
@@ -98,40 +88,7 @@
             transform: translateY(-3px);
         }
 
-        /* Card */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin: 50px 0;
-        }
-
-        .card {
-            background: rgba(26, 31, 46, 0.9);
-            backdrop-filter: blur(5px);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            transition: transform 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: #00aaff;
-        }
-
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .card h3 {
-            color: #00aaff;
-            margin-bottom: 10px;
-        }
-
-        /* Login Form */
+        /* Login Card */
         .login-card {
             max-width: 450px;
             margin: 40px auto;
@@ -156,11 +113,6 @@
             border-radius: 10px;
             color: white;
             font-size: 1rem;
-        }
-
-        .login-card input:focus {
-            outline: none;
-            border-color: #33ccff;
         }
 
         .message {
@@ -189,21 +141,31 @@
             color: #ffaa00;
         }
 
-        /* Server stats */
-        .server-stats {
-            max-width: 400px;
-            margin: 40px auto;
+        /* Sezione info (visibile solo dopo login) */
+        .info-section {
+            max-width: 600px;
+            margin: 30px auto;
             background: rgba(26, 31, 46, 0.9);
             border-radius: 20px;
             padding: 25px;
             text-align: center;
             backdrop-filter: blur(5px);
+            display: none;
         }
 
-        .member-count {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 10px 0;
+        .info-section h3 {
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+
+        .game-code {
+            background: rgba(0,0,0,0.5);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            margin-top: 10px;
         }
 
         /* Footer */
@@ -227,176 +189,161 @@
         <div class="header">
             <h1>⚜️ BOLOGNA | RP ⚜️</h1>
             <div class="subtitle">▸ ROLEPLAY ITALIANO SU ER:LC ◂</div>
-            <div class="game-code">🎮 Codice in-game: <strong>nDCjR</strong></div>
         </div>
 
-        <!-- Pulsanti esterni -->
+        <!-- Pulsanti esterni (visibili sempre) -->
         <div class="btn-group">
             <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
-            <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn">📜 REGOLAMENTO</a>
         </div>
 
-        <!-- Login Form -->
-        <div class="login-card">
+        <!-- Login Card -->
+        <div class="login-card" id="loginCard">
             <h2>🔐 ACCEDI AL TUO PERSONAGGIO</h2>
-            <input type="text" id="loginNomeRP" placeholder="Nome e Cognome RP" autocomplete="off">
-            <input type="text" id="loginDiscord" placeholder="Nome Discord" autocomplete="off">
-            <button class="btn" style="width: 100%;" onclick="login()">ACCEDI</button>
+            <button class="btn btn-discord" style="width:100%; margin-bottom:15px;" onclick="loginWithDiscord()">💬 ACCEDI CON DISCORD</button>
             <div id="message" class="message"></div>
         </div>
 
-        <!-- Statistiche server -->
-        <div class="server-stats" id="server-stats">
-            <div style="font-size: 2rem;">👥</div>
-            <div class="member-count" id="member-count">Caricamento...</div>
-            <div>Membri nel server</div>
-        </div>
-
-        <!-- Caratteristiche -->
-        <div class="features-grid">
-            <div class="card">
-                <div class="card-icon">👮‍♂️</div>
-                <h3>Forze dell'Ordine</h3>
-                <p>Sistema realistico con FDO, multe, arresti e mandati.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon">🏦</div>
-                <h3>Economia completa</h3>
-                <p>Banca, conti, stipendi, immobili e veicoli.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon">🎫</div>
-                <h3>Sistema Ticket</h3>
-                <p>Supporto rapido con categorie dedicate.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon">🚔</div>
-                <h3>Ruoli RP</h3>
-                <p>Cittadini, criminali, FDO, EMS, DOT e tanti altri.</p>
+        <!-- Sezione info (visibile solo dopo login) -->
+        <div id="infoSection" class="info-section">
+            <h3>📋 INFORMAZIONI SERVER</h3>
+            <div class="game-code">🎮 Codice in-game: <strong>nDCjR</strong></div>
+            <div style="margin-top: 15px;">
+                <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn btn-outline" style="padding: 8px 20px;">📜 REGOLAMENTO</a>
             </div>
         </div>
 
         <!-- Footer -->
         <footer>
             <p>© 2026 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
-            <p>🎮 Codice ER:LC: <strong>nDCjR</strong></p>
         </footer>
     </div>
 
     <script>
         // ================= CONFIGURAZIONE =================
-        const INVITE_CODE = "Gkj7Qdm63Z";
+        const CLIENT_ID = "1489266190432997520";
+        const REDIRECT_URI = encodeURIComponent("https://bologna-rp-site.vercel.app/callback.html");
+        const SERVER_ID = "1465791443493851310";
+        
+        // Mappa ID ruoli -> nomi leggibili
+        const ROLE_MAP = {
+            '1473322686301344006': 'fdo',
+            '1473323314138190038': 'cri',
+            '1489181994855432282': 'vdf',
+            '1473322697189490943': 'anas',
+            '1473323081102524500': 'concessionario',
+            '1473323100476014723': 'agenzia',
+            '1473318063377219717': 'staff'
+        };
         
         // ================= FUNZIONI =================
         
-        // Mostra messaggio
         function showMessage(text, type) {
             const msgDiv = document.getElementById('message');
             msgDiv.innerHTML = text;
             msgDiv.className = 'message ' + type;
             msgDiv.style.display = 'block';
-            
             setTimeout(() => {
                 msgDiv.style.display = 'none';
             }, 5000);
         }
         
-        // Login
-        async function login() {
-            const nomeRP = document.getElementById('loginNomeRP').value.trim();
-            const discordNome = document.getElementById('loginDiscord').value.trim();
+        function loginWithDiscord() {
+            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify+guilds+guilds.members.read`;
+            window.location.href = authUrl;
+        }
+        
+        // Verifica se l'utente è già loggato
+        function checkExistingSession() {
+            const token = localStorage.getItem('discord_token');
+            const userData = localStorage.getItem('discord_user_data');
             
-            if (!nomeRP || !discordNome) {
-                showMessage('❌ Inserisci tutti i campi', 'error');
-                return;
+            if (token && userData) {
+                // Utente già loggato, reindirizza alla dashboard
+                window.location.href = '/dashboard.html';
             }
+        }
+        
+        // Mostra info dopo login (se ci sono dati nell'URL)
+        function checkCallbackData() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
             
-            showMessage('⏳ Verifica in corso...', 'info');
-            
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome_rp: nomeRP, discord_nome: discordNome })
-                });
+            if (token) {
+                showMessage('⏳ Recupero informazioni da Discord...', 'info');
                 
-                const data = await response.json();
+                // Salva il token
+                localStorage.setItem('discord_token', token);
                 
-                if (data.success) {
-                    // Ottieni anche i ruoli dell'utente
-                    try {
-                        const ruoliResponse = await fetch(`/api/ruoli?discord_id=${data.session.discord_id}`);
-                        const ruoliData = await ruoliResponse.json();
-                        if (ruoliData.success) {
-                            data.session.ruoli = ruoliData.ruoli || ['cittadino'];
-                        } else {
-                            data.session.ruoli = ['cittadino'];
-                        }
-                    } catch (e) {
-                        data.session.ruoli = ['cittadino'];
+                // Ottieni informazioni utente
+                fetch('https://discord.com/api/users/@me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                .then(res => res.json())
+                .then(user => {
+                    // Salva dati utente base
+                    localStorage.setItem('discord_user_id', user.id);
+                    localStorage.setItem('discord_user_name', user.username);
+                    localStorage.setItem('discord_user_avatar', user.avatar);
+                    
+                    // Ottieni i server dell'utente
+                    return fetch('https://discord.com/api/users/@me/guilds', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                })
+                .then(res => res.json())
+                .then(guilds => {
+                    const server = guilds.find(g => g.id === SERVER_ID);
+                    if (!server) {
+                        throw new Error('Non sei membro del server Bologna | RP! Unisciti prima al server Discord.');
                     }
                     
-                    // Salva la sessione
-                    localStorage.setItem('session', JSON.stringify(data.session));
-                    showMessage('✅ Login riuscito! Reindirizzamento...', 'success');
+                    // Ottieni i ruoli dell'utente nel server
+                    return fetch(`https://discord.com/api/guilds/${SERVER_ID}/members/${localStorage.getItem('discord_user_id')}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                })
+                .then(res => res.json())
+                .then(member => {
+                    if (member && member.roles) {
+                        const ruoli = member.roles
+                            .filter(roleId => ROLE_MAP[roleId])
+                            .map(roleId => ROLE_MAP[roleId]);
+                        
+                        localStorage.setItem('discord_roles', JSON.stringify(ruoli));
+                    }
+                    
+                    // Salva tutti i dati utente
+                    const userData = {
+                        discord_id: localStorage.getItem('discord_user_id'),
+                        discord_name: localStorage.getItem('discord_user_name'),
+                        discord_avatar: localStorage.getItem('discord_user_avatar'),
+                        ruoli: JSON.parse(localStorage.getItem('discord_roles') || '["cittadino"]'),
+                        is_admin_web: localStorage.getItem('discord_user_id') === '1489975478797205534'
+                    };
+                    localStorage.setItem('discord_user_data', JSON.stringify(userData));
+                    
+                    showMessage('✅ Login completato! Reindirizzamento...', 'success');
                     
                     // Reindirizza alla dashboard
                     setTimeout(() => {
                         window.location.href = '/dashboard.html';
                     }, 1500);
-                } else {
-                    showMessage('❌ ' + data.error, 'error');
-                }
-            } catch (error) {
-                console.error('Errore:', error);
-                showMessage('❌ Errore di connessione al server', 'error');
-            }
-        }
-        
-        // Carica statistiche Discord
-        async function loadServerStats() {
-            try {
-                const response = await fetch(`https://discord.com/api/v9/invites/${INVITE_CODE}?with_counts=true`);
-                const data = await response.json();
-                if (data.approximate_member_count) {
-                    document.getElementById("member-count").innerText = data.approximate_member_count;
-                } else {
-                    document.getElementById("member-count").innerText = "💚 Apri il server";
-                }
-            } catch (error) {
-                document.getElementById("member-count").innerText = "🔗 Unisciti a noi!";
-            }
-        }
-        
-        // Controlla se l'utente è già loggato
-        function checkExistingSession() {
-            const session = localStorage.getItem('session');
-            if (session) {
-                try {
-                    const sessionData = JSON.parse(session);
-                    // Se la sessione non è scaduta (24 ore)
-                    if (sessionData.login_time && (Date.now() - sessionData.login_time) < 86400000) {
-                        window.location.href = '/dashboard.html';
-                    } else {
-                        localStorage.removeItem('session');
-                    }
-                } catch (e) {
-                    localStorage.removeItem('session');
-                }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showMessage('❌ ' + err.message, 'error');
+                    localStorage.removeItem('discord_token');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                });
             }
         }
         
         // ================= AVVIO =================
         checkExistingSession();
-        loadServerStats();
-        
-        // Aggiungi evento Invio sulla tastiera
-        document.getElementById('loginDiscord').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') login();
-        });
-        document.getElementById('loginNomeRP').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') login();
-        });
+        checkCallbackData();
     </script>
 
 </body>
