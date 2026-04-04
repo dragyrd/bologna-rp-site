@@ -239,8 +239,8 @@
         <!-- Login Form -->
         <div class="login-card">
             <h2>🔐 ACCEDI AL TUO PERSONAGGIO</h2>
-            <input type="text" id="loginNomeRP" placeholder="Nome e Cognome RP">
-            <input type="text" id="loginDiscord" placeholder="Nome Discord">
+            <input type="text" id="loginNomeRP" placeholder="Nome e Cognome RP" autocomplete="off">
+            <input type="text" id="loginDiscord" placeholder="Nome Discord" autocomplete="off">
             <button class="btn" style="width: 100%;" onclick="login()">ACCEDI</button>
             <div id="message" class="message"></div>
         </div>
@@ -303,8 +303,8 @@
         
         // Login
         async function login() {
-            const nomeRP = document.getElementById('loginNomeRP').value;
-            const discordNome = document.getElementById('loginDiscord').value;
+            const nomeRP = document.getElementById('loginNomeRP').value.trim();
+            const discordNome = document.getElementById('loginDiscord').value.trim();
             
             if (!nomeRP || !discordNome) {
                 showMessage('❌ Inserisci tutti i campi', 'error');
@@ -323,6 +323,19 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    // Ottieni anche i ruoli dell'utente
+                    try {
+                        const ruoliResponse = await fetch(`/api/ruoli?discord_id=${data.session.discord_id}`);
+                        const ruoliData = await ruoliResponse.json();
+                        if (ruoliData.success) {
+                            data.session.ruoli = ruoliData.ruoli || ['cittadino'];
+                        } else {
+                            data.session.ruoli = ['cittadino'];
+                        }
+                    } catch (e) {
+                        data.session.ruoli = ['cittadino'];
+                    }
+                    
                     // Salva la sessione
                     localStorage.setItem('session', JSON.stringify(data.session));
                     showMessage('✅ Login riuscito! Reindirizzamento...', 'success');
@@ -359,11 +372,15 @@
         function checkExistingSession() {
             const session = localStorage.getItem('session');
             if (session) {
-                const sessionData = JSON.parse(session);
-                // Se la sessione non è scaduta (24 ore)
-                if (sessionData.login_time && (Date.now() - sessionData.login_time) < 86400000) {
-                    window.location.href = '/dashboard.html';
-                } else {
+                try {
+                    const sessionData = JSON.parse(session);
+                    // Se la sessione non è scaduta (24 ore)
+                    if (sessionData.login_time && (Date.now() - sessionData.login_time) < 86400000) {
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        localStorage.removeItem('session');
+                    }
+                } catch (e) {
                     localStorage.removeItem('session');
                 }
             }
