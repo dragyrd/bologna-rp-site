@@ -2,41 +2,161 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Accesso in corso...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bologna | RP - Community Roleplay</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: #0a0f1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(10, 15, 26, 0.85), rgba(10, 15, 26, 0.9)), url('https://i.imgur.com/uI336Xj.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #eef2ff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .btn-group {
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: monospace;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .btn {
+            background: #00aaff;
             color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s, background 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
         }
-        .loader { text-align: center; }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(0,170,255,0.2);
-            border-top: 3px solid #00aaff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+
+        .btn-discord {
+            background: #5865F2;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .btn-discord:hover {
+            background: #4752c4;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .login-card {
+            max-width: 450px;
+            margin: 40px auto;
+            background: rgba(26, 31, 46, 0.95);
+            border-radius: 30px;
+            padding: 35px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .login-card h2 {
+            color: #00aaff;
+            margin-bottom: 25px;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.error {
+            background: rgba(255,85,85,0.2);
+            border: 1px solid #ff5555;
+            color: #ff5555;
+        }
+
+        .message.success {
+            background: rgba(85,255,85,0.2);
+            border: 1px solid #55ff55;
+            color: #55ff55;
+        }
+
+        .message.info {
+            background: rgba(255,170,0,0.2);
+            border: 1px solid #ffaa00;
+            color: #ffaa00;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
-    <div class="loader">
-        <div class="spinner"></div>
-        <h3>🎫 Accesso in corso...</h3>
-        <p>Recupero informazioni dal server...</p>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚜️ BOLOGNA | RP ⚜️</h1>
+            <div class="subtitle">▸ ROLEPLAY ITALIANO SU ER:LC ◂</div>
+        </div>
+
+        <div class="btn-group">
+            <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
+        </div>
+
+        <div class="login-card" id="loginCard">
+            <h2>🔐 ACCEDI</h2>
+            <button class="btn btn-discord" style="width:100%;" onclick="loginWithDiscord()">💬 ACCEDI CON DISCORD</button>
+            <div id="message" class="message"></div>
+        </div>
+
+        <footer>
+            <p>© 2026 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
+        </footer>
     </div>
 
     <script>
+        const CLIENT_ID = "1489266190432997520";
+        const REDIRECT_URI = encodeURIComponent(window.location.origin);
         const SERVER_ID = "1465791443493851310";
         
         const ROLE_MAP = {
@@ -49,39 +169,48 @@
             '1473318063377219717': 'staff'
         };
         
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-        const token = params.get('access_token');
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.innerHTML = text;
+            msgDiv.className = 'message ' + type;
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
         
-        if (token) {
-            localStorage.setItem('discord_token', token);
+        function loginWithDiscord() {
+            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify+guilds+guilds.members.read`;
+            window.location.href = authUrl;
+        }
+        
+        async function processToken(token) {
+            showMessage('⏳ Recupero informazioni da Discord...', 'info');
             
-            fetch('https://discord.com/api/users/@me', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            .then(res => res.json())
-            .then(user => {
-                localStorage.setItem('discord_user_id', user.id);
-                localStorage.setItem('discord_user_name', user.username);
-                localStorage.setItem('discord_user_avatar', user.avatar);
-                
-                return fetch('https://discord.com/api/users/@me/guilds', {
+            try {
+                // 1. Ottieni utente
+                const userRes = await fetch('https://discord.com/api/users/@me', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-            })
-            .then(res => res.json())
-            .then(guilds => {
+                const user = await userRes.json();
+                
+                // 2. Ottieni server dell'utente
+                const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const guilds = await guildsRes.json();
+                
                 const server = guilds.find(g => g.id === SERVER_ID);
                 if (!server) {
-                    throw new Error('Non sei nel server Bologna | RP');
+                    throw new Error('Non sei nel server Bologna | RP! Unisciti prima al server Discord.');
                 }
                 
-                return fetch(`https://discord.com/api/guilds/${SERVER_ID}/members/${localStorage.getItem('discord_user_id')}`, {
+                // 3. Ottieni ruoli
+                const memberRes = await fetch(`https://discord.com/api/guilds/${SERVER_ID}/members/${user.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-            })
-            .then(res => res.json())
-            .then(member => {
+                const member = await memberRes.json();
+                
                 let ruoli = ['cittadino'];
                 if (member && member.roles) {
                     const ruoliTrovati = member.roles
@@ -90,39 +219,57 @@
                     if (ruoliTrovati.length > 0) ruoli = ruoliTrovati;
                 }
                 
+                // Salva tutto
+                localStorage.setItem('discord_token', token);
+                localStorage.setItem('discord_user_id', user.id);
+                localStorage.setItem('discord_user_name', user.username);
+                localStorage.setItem('discord_user_avatar', user.avatar);
                 localStorage.setItem('discord_roles', JSON.stringify(ruoli));
                 
-                const userData = {
-                    discord_id: localStorage.getItem('discord_user_id'),
-                    discord_name: localStorage.getItem('discord_user_name'),
-                    discord_avatar: localStorage.getItem('discord_user_avatar'),
-                    ruoli: ruoli,
-                    is_admin_web: localStorage.getItem('discord_user_id') === '1489975478797205534'
-                };
-                localStorage.setItem('discord_user_data', JSON.stringify(userData));
-                
-                // Crea la sessione per la dashboard
                 const session = {
-                    discord_id: userData.discord_id,
-                    discord_nome: userData.discord_name,
-                    nome_rp: userData.discord_name,
+                    discord_id: user.id,
+                    discord_nome: user.username,
+                    nome_rp: user.username,
                     saldo: 0,
                     ruoli: ruoli,
-                    is_admin_web: userData.is_admin_web,
+                    is_admin_web: user.id === '1489975478797205534',
                     login_time: Date.now()
                 };
                 localStorage.setItem('session', JSON.stringify(session));
                 
-                window.location.href = '/dashboard.html';
-            })
-            .catch(err => {
+                showMessage('✅ Login riuscito! Reindirizzamento...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 1500);
+                
+            } catch (err) {
                 console.error(err);
-                alert('Errore: ' + err.message);
-                window.location.href = '/';
-            });
-        } else {
-            window.location.href = '/';
+                showMessage('❌ ' + err.message, 'error');
+                localStorage.removeItem('discord_token');
+            }
         }
+        
+        // Controlla se c'è un token nell'URL (dopo redirect)
+        function checkForToken() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
+            
+            if (token) {
+                // Pulisci l'URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                processToken(token);
+            }
+        }
+        
+        // Controlla se l'utente è già loggato
+        const session = localStorage.getItem('session');
+        if (session) {
+            window.location.href = '/dashboard.html';
+        }
+        
+        checkForToken();
     </script>
+
 </body>
 </html>
