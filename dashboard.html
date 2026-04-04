@@ -22,22 +22,22 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* Header */
+        /* Header con info utente */
         .header {
             background: rgba(26, 31, 46, 0.9);
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
         }
 
         .user-info {
@@ -47,52 +47,92 @@
         }
 
         .user-avatar {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             border: 2px solid #00aaff;
         }
 
         .user-details h2 {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+            margin-bottom: 3px;
         }
 
         .user-details p {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #aaa;
         }
 
         .saldo {
             background: rgba(0,170,255,0.2);
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 20px;
             font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9rem;
         }
 
         .logout-btn {
             background: #ff5555;
             color: white;
-            padding: 8px 20px;
+            padding: 6px 18px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
             cursor: pointer;
             border: none;
+            font-size: 0.9rem;
         }
 
-        /* Pulsanti esterni */
-        .btn-group {
+        /* Barra categorie orizzontale */
+        .categories-bar {
+            background: rgba(26, 31, 46, 0.9);
+            border-radius: 50px;
+            padding: 8px 20px;
+            margin-bottom: 25px;
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .category-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-btn:hover {
+            background: rgba(0,170,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .category-btn.active {
+            background: #00aaff;
+            color: white;
+        }
+
+        /* Pulsanti Discord e Regolamento */
+        .btn-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         .btn {
             background: #00aaff;
             color: white;
-            padding: 10px 25px;
+            padding: 8px 20px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
@@ -100,6 +140,7 @@
             display: inline-block;
             border: none;
             cursor: pointer;
+            font-size: 0.9rem;
         }
 
         .btn-discord {
@@ -119,7 +160,6 @@
             background: rgba(26, 31, 46, 0.7);
             border-radius: 20px;
             padding: 25px;
-            margin-bottom: 30px;
         }
 
         .annunci-header {
@@ -160,7 +200,7 @@
         }
 
         .annunci-list {
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
@@ -201,6 +241,36 @@
             font-size: 0.7rem;
         }
 
+        /* Categoria Container (dinamico) */
+        .category-container {
+            background: rgba(26, 31, 46, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+        }
+
+        .category-header h2 {
+            color: #00aaff;
+        }
+
+        .back-btn {
+            background: #00aaff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
         footer {
             text-align: center;
             padding: 30px;
@@ -210,8 +280,11 @@
         }
 
         @media (max-width: 768px) {
+            .categories-bar { border-radius: 20px; }
+            .category-btn { padding: 8px 12px; font-size: 0.8rem; }
             .header { flex-direction: column; text-align: center; }
             .user-info { flex-direction: column; }
+            .btn-group { justify-content: center; }
         }
     </style>
 </head>
@@ -233,20 +306,36 @@
             </div>
         </div>
 
+        <!-- Barra categorie orizzontale -->
+        <div class="categories-bar">
+            <button class="category-btn" onclick="showCategory('annunci')">📢 ANNUNCI</button>
+            <button class="category-btn" onclick="showCategory('fdo')">🚔 FDO</button>
+            <button class="category-btn" onclick="showCategory('cri')">🚑 CRI</button>
+            <button class="category-btn" onclick="showCategory('vdf')">🔥 VDF</button>
+            <button class="category-btn" onclick="showCategory('anas')">🛣️ ANAS</button>
+            <button class="category-btn" onclick="showCategory('concessionario')">🚗 CONCESSIONARIO</button>
+            <button class="category-btn" onclick="showCategory('agenzia')">🏠 AGENZIA</button>
+        </div>
+
         <!-- Pulsanti Discord e Regolamento -->
         <div class="btn-group">
             <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
             <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn">📜 REGOLAMENTO</a>
         </div>
 
-        <!-- Sezione Annunci -->
-        <div class="annunci-section" id="annunciSection">
-            <div class="annunci-header">
-                <h2>📢 ANNUNCI UFFICIALI</h2>
-            </div>
-            <div id="adminFormContainer"></div>
-            <div id="annunciList" class="annunci-list">
-                <div style="text-align: center; padding: 20px;">Caricamento annunci...</div>
+        <!-- Contenuto principale -->
+        <div id="mainContent">
+            <!-- Sezione Annunci (visibile di default) -->
+            <div id="annunciView">
+                <div class="annunci-section">
+                    <div class="annunci-header">
+                        <h2>📢 ANNUNCI UFFICIALI</h2>
+                    </div>
+                    <div id="adminFormContainer"></div>
+                    <div id="annunciList" class="annunci-list">
+                        <div style="text-align: center; padding: 20px;">Caricamento annunci...</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -256,35 +345,39 @@
     </div>
 
     <script>
-        // Recupera la sessione
+        // ================= VARIABILI =================
         const session = JSON.parse(localStorage.getItem('session') || '{}');
-        
-        // Verifica se loggato
+        let isAdmin = session.is_admin_web || false;
+        let annunci = [];
+        let currentCategory = 'annunci';
+
+        // ================= VERIFICA LOGIN =================
         if (!session.nome_rp) {
             window.location.href = '/';
         }
-        
-        // Variabili
-        let isAdmin = session.is_admin_web || false;
-        let annunci = [];
-        
-        // Mostra info utente
+
+        // ================= FUNZIONI UTILITY =================
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ================= INFO UTENTE =================
         function loadUserInfo() {
             document.getElementById('userName').innerText = session.nome_rp;
             document.getElementById('userDiscord').innerHTML = `@${session.discord_nome}`;
-            document.getElementById('userSaldo').innerHTML = `💰 ${session.saldo}€`;
-            
-            // Avatar placeholder (Discord richiede token per avatar vero)
-            // Per ora lasciamo quello di default
+            document.getElementById('userSaldo').innerHTML = `💰 ${session.saldo || 0}€`;
         }
-        
-        // Logout
+
+        // ================= LOGOUT =================
         function logout() {
             localStorage.removeItem('session');
             window.location.href = '/';
         }
-        
-        // Carica annunci dal server
+
+        // ================= ANNUNCI =================
         async function loadAnnunci() {
             try {
                 const response = await fetch('/api/annunci');
@@ -295,11 +388,9 @@
                 document.getElementById('annunciList').innerHTML = '<div style="text-align: center; padding: 20px;">❌ Errore caricamento annunci</div>';
             }
         }
-        
-        // Mostra form admin se l'utente è admin web
+
         function showAdminForm() {
             if (!isAdmin) return;
-            
             document.getElementById('adminFormContainer').innerHTML = `
                 <div class="admin-form">
                     <h3 style="color: #00aaff; margin-bottom: 15px;">✏️ NUOVO ANNUNCIO</h3>
@@ -309,17 +400,14 @@
                 </div>
             `;
         }
-        
-        // Pubblica nuovo annuncio
+
         async function pubblicaAnnuncio() {
             const titolo = document.getElementById('annuncioTitolo').value;
             const contenuto = document.getElementById('annuncioContenuto').value;
-            
             if (!titolo || !contenuto) {
                 alert('Inserisci titolo e contenuto');
                 return;
             }
-            
             try {
                 const response = await fetch('/api/annunci', {
                     method: 'POST',
@@ -331,7 +419,6 @@
                         autore_discord_id: session.discord_id
                     })
                 });
-                
                 if (response.ok) {
                     document.getElementById('annuncioTitolo').value = '';
                     document.getElementById('annuncioContenuto').value = '';
@@ -343,11 +430,9 @@
                 alert('Errore di connessione');
             }
         }
-        
-        // Elimina annuncio
+
         async function eliminaAnnuncio(id) {
             if (!confirm('Eliminare questo annuncio?')) return;
-            
             try {
                 const response = await fetch('/api/annunci', {
                     method: 'DELETE',
@@ -357,7 +442,6 @@
                         autore_discord_id: session.discord_id
                     })
                 });
-                
                 if (response.ok) {
                     loadAnnunci();
                 } else {
@@ -367,16 +451,13 @@
                 alert('Errore di connessione');
             }
         }
-        
-        // Renderizza la lista annunci
+
         function renderAnnunci() {
             const container = document.getElementById('annunciList');
-            
             if (!annunci || annunci.length === 0) {
                 container.innerHTML = '<div style="text-align: center; padding: 20px;">Nessun annuncio presente.</div>';
                 return;
             }
-            
             let html = '';
             for (const a of annunci) {
                 html += `
@@ -392,18 +473,78 @@
             }
             container.innerHTML = html;
         }
-        
-        // Helper escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+
+        // ================= GESTIONE CATEGORIE =================
+        function showCategory(categoria) {
+            currentCategory = categoria;
+            
+            // Aggiorna classe active sui bottoni
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const mainContent = document.getElementById('mainContent');
+            
+            if (categoria === 'annunci') {
+                showAnnunciView();
+                return;
+            }
+            
+            let categoryHtml = `
+                <div class="category-container">
+                    <div class="category-header">
+                        <h2>${getCategoryTitle(categoria)}</h2>
+                        <span class="back-btn" onclick="showCategory('annunci')">← Torna agli Annunci</span>
+                    </div>
+                    <div id="categoryContent">
+                        <div style="text-align: center; padding: 40px;">
+                            <p>🚧 Sezione in costruzione...</p>
+                            <p style="font-size: 0.8rem; margin-top: 10px;">La funzionalità per ${getCategoryTitle(categoria)} sarà disponibile a breve.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            mainContent.innerHTML = categoryHtml;
         }
-        
-        // Inizializza
+
+        function showAnnunciView() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div id="annunciView">
+                    <div class="annunci-section">
+                        <div class="annunci-header">
+                            <h2>📢 ANNUNCI UFFICIALI</h2>
+                        </div>
+                        <div id="adminFormContainer"></div>
+                        <div id="annunciList" class="annunci-list">
+                            <div style="text-align: center; padding: 20px;">Caricamento annunci...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showAdminForm();
+            renderAnnunci();
+        }
+
+        function getCategoryTitle(categoria) {
+            const titles = {
+                'fdo': '🚔 FORZE DELL\'ORDINE',
+                'cri': '🚑 CRI - CROCE ROSSA',
+                'vdf': '🔥 VDF - VIGILI DEL FUOCO',
+                'anas': '🛣️ ANAS - VIABILITÀ',
+                'concessionario': '🚗 CONCESSIONARIO',
+                'agenzia': '🏠 AGENZIA IMMOBILIARE'
+            };
+            return titles[categoria] || categoria.toUpperCase();
+        }
+
+        // ================= INIZIALIZZAZIONE =================
         loadUserInfo();
-        showAdminForm();
-        loadAnnunci();
+        loadAnnunci().then(() => {
+            showAdminForm();
+        });
     </script>
 
 </body>
