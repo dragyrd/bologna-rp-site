@@ -109,17 +109,33 @@
             window.location.href = authUrl;
         }
         
-        async function processLogin(discordId, discordName) {
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        discord_id: discordId,
-                        discord_nome: discordName,
-                        nome_rp: discordName
-                    })
-                });
+async function processLogin(discordId, discordName) {
+    // PULISCI TUTTI I VECCHI DATI prima del nuovo login
+    localStorage.clear();
+    
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                discord_id: discordId,
+                discord_nome: discordName,
+                nome_rp: discordName
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            localStorage.setItem('session', JSON.stringify(data.session));
+            window.location.href = '/dashboard.html';
+        } else {
+            showMessage('❌ ' + data.error, 'error');
+        }
+    } catch (error) {
+        showMessage('❌ Errore di connessione', 'error');
+    }
+}
                 
                 const data = await response.json();
                 
