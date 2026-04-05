@@ -1,3 +1,22 @@
+// Verifica che l'utente nella sessione corrisponda all'utente Discord attuale
+async function verificaSessione() {
+    const session = JSON.parse(localStorage.getItem('session') || '{}');
+    const discordUserId = localStorage.getItem('discord_user_id');
+    
+    // Se non c'è sessione o l'ID non corrisponde, torna al login
+    if (!session.discord_id || (discordUserId && session.discord_id !== discordUserId)) {
+        localStorage.clear();
+        window.location.href = '/';
+        return false;
+    }
+    return true;
+}
+
+// Chiamala all'inizio
+if (!verificaSessione()) {
+    // La funzione reindirizza già
+}
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
