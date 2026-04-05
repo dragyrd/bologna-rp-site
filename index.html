@@ -109,33 +109,20 @@
             window.location.href = authUrl;
         }
         
-async function processLogin(discordId, discordName) {
-    // PULISCI TUTTI I VECCHI DATI prima del nuovo login
-    localStorage.clear();
-    
-    try {
-        const response = await fetch(`${API_URL}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                discord_id: discordId,
-                discord_nome: discordName,
-                nome_rp: discordName
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            localStorage.setItem('session', JSON.stringify(data.session));
-            window.location.href = '/dashboard.html';
-        } else {
-            showMessage('❌ ' + data.error, 'error');
-        }
-    } catch (error) {
-        showMessage('❌ Errore di connessione', 'error');
-    }
-}
+        async function processLogin(discordId, discordName) {
+            // PULISCI TUTTI I VECCHI DATI
+            localStorage.clear();
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        discord_id: discordId,
+                        discord_nome: discordName,
+                        nome_rp: discordName
+                    })
+                });
                 
                 const data = await response.json();
                 
@@ -164,9 +151,6 @@ async function processLogin(discordId, discordName) {
                 })
                 .then(res => res.json())
                 .then(user => {
-                    localStorage.setItem('discord_user_id', user.id);
-                    localStorage.setItem('discord_user_name', user.username);
-                    localStorage.setItem('discord_user_avatar', user.avatar);
                     processLogin(user.id, user.username);
                 })
                 .catch(err => {
@@ -175,6 +159,7 @@ async function processLogin(discordId, discordName) {
             }
         }
         
+        // Se c'è già una sessione, vai direttamente alla dashboard
         const session = localStorage.getItem('session');
         if (session) {
             window.location.href = '/dashboard.html';
