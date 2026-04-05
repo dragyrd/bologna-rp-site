@@ -1,22 +1,3 @@
-// Verifica che l'utente nella sessione corrisponda all'utente Discord attuale
-async function verificaSessione() {
-    const session = JSON.parse(localStorage.getItem('session') || '{}');
-    const discordUserId = localStorage.getItem('discord_user_id');
-    
-    // Se non c'è sessione o l'ID non corrisponde, torna al login
-    if (!session.discord_id || (discordUserId && session.discord_id !== discordUserId)) {
-        localStorage.clear();
-        window.location.href = '/';
-        return false;
-    }
-    return true;
-}
-
-// Chiamala all'inizio
-if (!verificaSessione()) {
-    // La funzione reindirizza già
-}
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -60,10 +41,19 @@ if (!verificaSessione()) {
             gap: 15px;
         }
         .user-avatar {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             border: 2px solid #00aaff;
+            object-fit: cover;
+        }
+        .user-details h2 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .user-details p {
+            font-size: 0.8rem;
+            color: #aaa;
         }
         .saldo {
             background: rgba(0,170,255,0.2);
@@ -79,6 +69,10 @@ if (!verificaSessione()) {
             border-radius: 50px;
             cursor: pointer;
             border: none;
+            transition: background 0.3s;
+        }
+        .logout-btn:hover {
+            background: #cc4444;
         }
         .categories-bar {
             background: rgba(26, 31, 46, 0.9);
@@ -103,6 +97,12 @@ if (!verificaSessione()) {
         .category-btn:hover, .category-btn.active {
             background: #00aaff;
         }
+        .btn-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
         .btn {
             background: #00aaff;
             color: white;
@@ -111,12 +111,29 @@ if (!verificaSessione()) {
             text-decoration: none;
             border: none;
             cursor: pointer;
+            transition: transform 0.3s;
         }
-        .btn-discord { background: #5865F2; }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-discord {
+            background: #5865F2;
+        }
+        .btn-discord:hover {
+            background: #4752c4;
+        }
         .annunci-section {
             background: rgba(26, 31, 46, 0.7);
             border-radius: 20px;
             padding: 25px;
+        }
+        .annunci-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+        }
+        .annunci-header h2 {
+            color: #00aaff;
         }
         .admin-form {
             background: rgba(0,0,0,0.3);
@@ -132,6 +149,15 @@ if (!verificaSessione()) {
             border: 1px solid #00aaff;
             border-radius: 10px;
             color: white;
+            font-size: 0.9rem;
+        }
+        .admin-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .annunci-list {
+            max-height: 500px;
+            overflow-y: auto;
         }
         .annuncio-item {
             background: rgba(0,0,0,0.3);
@@ -140,11 +166,20 @@ if (!verificaSessione()) {
             margin-bottom: 15px;
             border-left: 3px solid #00aaff;
         }
-        .annuncio-titolo { font-weight: bold; margin-bottom: 8px; }
-        .annuncio-contenuto { color: #ccc; margin-bottom: 10px; }
+        .annuncio-titolo {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .annuncio-contenuto {
+            color: #ccc;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
         .annuncio-footer {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 0.7rem;
             color: #888;
         }
@@ -155,26 +190,50 @@ if (!verificaSessione()) {
             padding: 5px 10px;
             border-radius: 10px;
             cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .delete-btn:hover {
+            background: #cc4444;
+        }
+        .category-placeholder {
+            background: rgba(26, 31, 46, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+        .category-placeholder h2 {
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+        .category-placeholder p {
+            color: #aaa;
+            margin-bottom: 10px;
         }
         footer {
             text-align: center;
             padding: 30px;
             margin-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
             font-size: 0.8rem;
         }
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
+            .user-info { flex-direction: column; }
             .categories-bar { border-radius: 20px; }
+            .btn-group { justify-content: center; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
+    <div class="header" id="header">
         <div class="user-info">
-            <img class="user-avatar" id="userAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png">
-            <div><h2 id="userName">Caricamento...</h2><p id="userDiscord">@caricamento</p></div>
+            <img class="user-avatar" id="userAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
+            <div class="user-details">
+                <h2 id="userName">Caricamento...</h2>
+                <p id="userDiscord">@caricamento</p>
+            </div>
         </div>
         <div>
             <span class="saldo" id="userSaldo">💰 0€</span>
@@ -192,75 +251,125 @@ if (!verificaSessione()) {
         <button class="category-btn" onclick="showCategory('agenzia', this)">🏠 AGENZIA</button>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 20px;">
+    <div class="btn-group">
         <a href="https://discord.gg/Gkj7Qdm63Z" target="_blank" class="btn btn-discord">💬 DISCORD</a>
         <a href="https://docs.google.com/document/d/1FcFUAcKs1r8-6EEsJHd_AqbjxqOB2rigGty16BWVFOM/edit?usp=sharing" target="_blank" class="btn">📜 REGOLAMENTO</a>
     </div>
 
     <div id="mainContent"></div>
-    <footer>© 2026 Bologna | RP – Community Roleplay</footer>
+
+    <footer>
+        <p>© 2026 Bologna | RP – Community Roleplay Italiana su ER:LC</p>
+    </footer>
 </div>
 
 <script>
     const API_URL = "https://bologna-rp-api-84yl.onrender.com";
+    
+    // ================= VERIFICA SESSIONE =================
     let session = JSON.parse(localStorage.getItem('session') || '{}');
     let userRuoli = session.ruoli || ['cittadino'];
     let isAdminWeb = session.is_admin_web || false;
     
-    if (!session.discord_id) window.location.href = '/';
-    
-    document.getElementById('userName').innerText = session.nome_rp;
-    document.getElementById('userDiscord').innerHTML = `@${session.discord_nome}`;
-    document.getElementById('userSaldo').innerHTML = `💰 ${session.saldo || 0}€`;
-    
-    // Avatar Discord
-    if (localStorage.getItem('discord_user_avatar')) {
-        const avatarId = localStorage.getItem('discord_user_avatar');
-        document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${session.discord_id}/${avatarId}.png`;
+    // Se non c'è sessione o non valida, torna al login
+    if (!session.discord_id) {
+        localStorage.clear();
+        window.location.href = '/';
     }
     
+    // ================= CARICA DATI UTENTE =================
+    function loadUserInfo() {
+        document.getElementById('userName').innerText = session.nome_rp;
+        document.getElementById('userDiscord').innerHTML = `@${session.discord_nome}`;
+        document.getElementById('userSaldo').innerHTML = `💰 ${session.saldo || 0}€`;
+        
+        // Carica avatar Discord se disponibile
+        const avatarId = localStorage.getItem('discord_user_avatar');
+        if (avatarId && session.discord_id) {
+            document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${session.discord_id}/${avatarId}.png`;
+        }
+    }
+    
+    // ================= LOGOUT =================
     function logout() {
         localStorage.clear();
         window.location.href = '/';
     }
     
-    // Aggiorna ruoli ogni 30 secondi
-    async function aggiornaRuoli() {
-        try {
-            const res = await fetch(`${API_URL}/user-roles?discord_id=${session.discord_id}`);
-            const data = await res.json();
-            if (data.success && data.ruoli && JSON.stringify(data.ruoli) !== JSON.stringify(userRuoli)) {
-                userRuoli = data.ruoli;
-                session.ruoli = userRuoli;
-                localStorage.setItem('session', JSON.stringify(session));
-                location.reload();
-            }
-        } catch(e) { console.error(e); }
-    }
-    setInterval(aggiornaRuoli, 30000);
-    
-    // Annunci
+    // ================= ANNUNCI =================
     async function loadAnnunci() {
-        const res = await fetch(`${API_URL}/annunci`);
-        const annunci = await res.json();
         const container = document.getElementById('annunciList');
-        if (!annunci || annunci.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px;">Nessun annuncio</div>';
+        if (!container) return;
+        
+        try {
+            const response = await fetch(`${API_URL}/annunci`);
+            const annunci = await response.json();
+            
+            if (!annunci || annunci.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px;">Nessun annuncio presente.</div>';
+                return;
+            }
+            
+            let html = '';
+            for (const a of annunci) {
+                html += `
+                    <div class="annuncio-item">
+                        <div class="annuncio-titolo">${escapeHtml(a.titolo)}</div>
+                        <div class="annuncio-contenuto">${escapeHtml(a.contenuto)}</div>
+                        <div class="annuncio-footer">
+                            <span>📅 ${new Date(a.data).toLocaleString('it-IT')} | 👤 ${escapeHtml(a.autore)}</span>
+                            ${isAdminWeb ? `<button class="delete-btn" onclick="eliminaAnnuncio(${a.id})">🗑️ Elimina</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        } catch (error) {
+            container.innerHTML = '<div style="text-align:center; padding:20px;">❌ Errore caricamento annunci</div>';
+        }
+    }
+    
+    async function eliminaAnnuncio(id) {
+        if (!confirm('Eliminare questo annuncio?')) return;
+        
+        try {
+            await fetch(`${API_URL}/annunci`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, autore_discord_id: session.discord_id })
+            });
+            loadAnnunci();
+        } catch (error) {
+            alert('Errore durante l\'eliminazione');
+        }
+    }
+    
+    window.pubblicaAnnuncio = async function() {
+        const titolo = document.getElementById('titolo')?.value;
+        const contenuto = document.getElementById('contenuto')?.value;
+        
+        if (!titolo || !contenuto) {
+            alert('Inserisci titolo e contenuto');
             return;
         }
-        let html = '';
-        for (let a of annunci) {
-            html += `<div class="annuncio-item">
-                <div class="annuncio-titolo">${escapeHtml(a.titolo)}</div>
-                <div class="annuncio-contenuto">${escapeHtml(a.contenuto)}</div>
-                <div class="annuncio-footer">
-                    <span>📅 ${new Date(a.data).toLocaleString('it-IT')} | 👤 ${escapeHtml(a.autore)}</span>
-                    ${isAdminWeb ? `<button class="delete-btn" onclick="eliminaAnnuncio(${a.id})">🗑️ Elimina</button>` : ''}
-                </div>
-            </div>`;
+        
+        try {
+            await fetch(`${API_URL}/annunci`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    titolo, contenuto,
+                    autore: session.nome_rp,
+                    autore_discord_id: session.discord_id
+                })
+            });
+            document.getElementById('titolo').value = '';
+            document.getElementById('contenuto').value = '';
+            loadAnnunci();
+        } catch (error) {
+            alert('Errore nella pubblicazione');
         }
-        container.innerHTML = html;
-    }
+    };
     
     function escapeHtml(text) {
         if (!text) return '';
@@ -269,73 +378,10 @@ if (!verificaSessione()) {
         return div.innerHTML;
     }
     
-    async function eliminaAnnuncio(id) {
-        if (!confirm('Eliminare questo annuncio?')) return;
-        await fetch(`${API_URL}/annunci`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, autore_discord_id: session.discord_id })
-        });
-        loadAnnunci();
-    }
-    
-    window.pubblicaAnnuncio = async function() {
-        const titolo = document.getElementById('titolo')?.value;
-        const contenuto = document.getElementById('contenuto')?.value;
-        if (!titolo || !contenuto) return alert('Compila tutti i campi');
-        await fetch(`${API_URL}/annunci`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                titolo, contenuto,
-                autore: session.nome_rp,
-                autore_discord_id: session.discord_id
-            })
-        });
-        document.getElementById('titolo').value = '';
-        document.getElementById('contenuto').value = '';
-        loadAnnunci();
-    };
-    
-    function showCategory(cat, btn) {
-        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-        const main = document.getElementById('mainContent');
-        
-        if (cat === 'annunci') {
-            main.innerHTML = `
-                <div class="annunci-section">
-                    <div class="annunci-header"><h2>📢 ANNUNCI UFFICIALI</h2></div>
-                    ${isAdminWeb ? `
-                        <div class="admin-form">
-                            <input type="text" id="titolo" placeholder="Titolo annuncio">
-                            <textarea id="contenuto" placeholder="Contenuto annuncio..."></textarea>
-                            <button class="btn" onclick="pubblicaAnnuncio()">📢 PUBBLICA ANNUNCIO</button>
-                        </div>
-                    ` : ''}
-                    <div id="annunciList">Caricamento...</div>
-                </div>
-            `;
-            loadAnnunci();
-        } else {
-            const hasAccess = userRuoli.includes(cat) || userRuoli.includes('staff');
-            main.innerHTML = `
-                <div style="background:rgba(26,31,46,0.7); border-radius:20px; padding:25px; text-align:center;">
-                    <h2 style="color:#00aaff;">${getCategoryTitle(cat)}</h2>
-                    ${hasAccess ? `
-                        <p style="margin-top:20px;">✅ Hai accesso a questa sezione.</p>
-                        <p>Funzionalità in sviluppo...</p>
-                    ` : `
-                        <p style="margin-top:20px; color:#ffaa00;">⚠️ Non hai i permessi per accedere a questa sezione.</p>
-                        <p>Per accedere, devi avere il ruolo corrispondente su Discord.</p>
-                    `}
-                </div>
-            `;
-        }
-    }
-    
+    // ================= GESTIONE CATEGORIE =================
     function getCategoryTitle(cat) {
         const titles = {
+            'annunci': '📢 ANNUNCI UFFICIALI',
             'fdo': '🚔 FORZE DELL\'ORDINE',
             'cri': '🚑 CRI - CROCE ROSSA',
             'vdf': '🔥 VDF - VIGILI DEL FUOCO',
@@ -346,7 +392,66 @@ if (!verificaSessione()) {
         return titles[cat] || cat.toUpperCase();
     }
     
-    // Avvia con la sezione annunci
+    function showCategory(cat, btn) {
+        // Aggiorna classe attiva
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        
+        const main = document.getElementById('mainContent');
+        
+        if (cat === 'annunci') {
+            // Sezione annunci completa
+            main.innerHTML = `
+                <div class="annunci-section">
+                    <div class="annunci-header">
+                        <h2>📢 ANNUNCI UFFICIALI</h2>
+                    </div>
+                    ${isAdminWeb ? `
+                        <div class="admin-form">
+                            <input type="text" id="titolo" placeholder="Titolo annuncio">
+                            <textarea id="contenuto" placeholder="Contenuto annuncio..."></textarea>
+                            <button class="btn" onclick="pubblicaAnnuncio()">📢 PUBBLICA ANNUNCIO</button>
+                        </div>
+                    ` : ''}
+                    <div id="annunciList" class="annunci-list">
+                        <div style="text-align:center; padding:20px;">Caricamento annunci...</div>
+                    </div>
+                </div>
+            `;
+            loadAnnunci();
+        } else {
+            // Placeholder per le altre categorie
+            main.innerHTML = `
+                <div class="category-placeholder">
+                    <h2>${getCategoryTitle(cat)}</h2>
+                    <p>🚧 Questa sezione è in fase di sviluppo.</p>
+                    <p>Torna presto per scoprire le novità!</p>
+                </div>
+            `;
+        }
+    }
+    
+    // ================= AGGIORNAMENTO RUOLI =================
+    async function aggiornaRuoli() {
+        try {
+            const response = await fetch(`${API_URL}/user-roles?discord_id=${session.discord_id}`);
+            const data = await response.json();
+            if (data.success && data.ruoli && JSON.stringify(data.ruoli) !== JSON.stringify(userRuoli)) {
+                userRuoli = data.ruoli;
+                session.ruoli = userRuoli;
+                localStorage.setItem('session', JSON.stringify(session));
+                location.reload();
+            }
+        } catch(e) {
+            console.error('Errore aggiornamento ruoli:', e);
+        }
+    }
+    
+    // Aggiorna ruoli ogni 30 secondi
+    setInterval(aggiornaRuoli, 30000);
+    
+    // ================= INIZIALIZZAZIONE =================
+    loadUserInfo();
     showCategory('annunci');
 </script>
 </body>
