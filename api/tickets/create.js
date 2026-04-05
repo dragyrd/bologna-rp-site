@@ -1,6 +1,12 @@
-// api/tickets/create.js
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
 export default async function handler(req, res) {
-  // Imposta CORS per permettere richieste dal frontend
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -14,23 +20,48 @@ export default async function handler(req, res) {
   }
 
   const { user_discord_id, user_discord_name, categoria, messaggio } = req.body;
-  
+
   // Genera ID ticket unico
   const ticket_id = `TICKET-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-  
-  // Per ora salviamo in memoria (poi collegheremo Supabase)
-  console.log('Nuovo ticket creato:', {
-    ticket_id,
-    user_discord_id,
-    user_discord_name,
-    categoria,
-    messaggio,
-    created_at: new Date().toISOString()
-  });
+
+  // 1. Inserisci il ticket in Supabase
+  const { data: ticket, error: ticketError } = await supabase
+    .from('tickets')
+    .insert({
+      ticket_id: ticket_id,
+      user_discord_id: user_discord_id,
+      user_discord_name: user_discord_name,
+      categoria: categoria,
+      status: 'aperto',
+      created_at: new Date().toISOString()
+    })
+    .select()
+    .single();
+
+  if (ticketError) {
+    console.error('Errore inserimento ticket:', ticketError);
+    return res.status(500).json({ error: ticketError.message });
+  }
+
+  // 2. Inserisci il primo messaggio
+  const { error: msgError } = await supabase
+    .from('messages')
+    .insert({
+      ticket_id: ticket_id,
+      user_discord_id: user_discord_id,
+      user_discord_name: user_discord_name,
+      message: messaggio,
+      created_at: new Date().toISOString()
+    });
+
+  if (msgError) {
+    console.error('Errore inserimento messaggio:', msgError);
+    return res.status(500).json({ error: msgError.message });
+  }
 
   res.status(200).json({ 
     success: true, 
     ticket_id: ticket_id,
-    message: 'Ticket creato con successo (salvato in log, non ancora in database)'
+    message: 'Ticket creato con successo!'
   });
 }
