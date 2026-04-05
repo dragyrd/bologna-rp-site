@@ -3,169 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bologna | RP - Accedi</title>
+    <title>Bologna RP - Login</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(rgba(10, 15, 26, 0.85), rgba(10, 15, 26, 0.9)), url('https://i.imgur.com/uI336Xj.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #eef2ff;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
-        .login-card {
-            max-width: 450px;
-            width: 90%;
-            background: rgba(26, 31, 46, 0.95);
-            border-radius: 30px;
-            padding: 40px;
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
             text-align: center;
-            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .login-card h1 {
-            font-size: 2rem;
+
+        h1 {
+            color: #fff;
+            font-size: 3rem;
             margin-bottom: 10px;
         }
-        .login-card h2 {
-            color: #00aaff;
-            margin-bottom: 25px;
-            font-size: 1.3rem;
+
+        .subtitle {
+            color: #aaa;
+            margin-bottom: 40px;
         }
-        .btn-discord {
+
+        .discord-btn {
             background: #5865F2;
             color: white;
-            padding: 14px 30px;
-            border-radius: 50px;
             border: none;
-            font-weight: bold;
-            font-size: 1rem;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
             cursor: pointer;
-            width: 100%;
-            transition: transform 0.3s;
+            transition: transform 0.2s, background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
         }
-        .btn-discord:hover {
+
+        .discord-btn:hover {
             background: #4752c4;
-            transform: translateY(-2px);
-        }
-        .message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 10px;
-            display: none;
-        }
-        .message.error {
-            background: rgba(255,85,85,0.2);
-            border: 1px solid #ff5555;
-            color: #ff5555;
-        }
-        .message.success {
-            background: rgba(85,255,85,0.2);
-            border: 1px solid #55ff55;
-            color: #55ff55;
-        }
-        footer {
-            margin-top: 30px;
-            font-size: 0.7rem;
-            color: #888;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-
-    <div class="login-card">
+    <div class="login-container">
         <h1>⚜️ BOLOGNA | RP ⚜️</h1>
-        <h2>🔐 ACCEDI</h2>
-        <button class="btn-discord" onclick="loginWithDiscord()">💬 ACCEDI CON DISCORD</button>
-        <div id="message" class="message"></div>
-        <footer>© 2026 Bologna | RP – Community Roleplay</footer>
+        <p class="subtitle">Accedi per visualizzare dashboard e ticket</p>
+        <button class="discord-btn" onclick="loginWithDiscord()">
+            💬 ACCEDI CON DISCORD
+        </button>
     </div>
 
     <script>
-        const CLIENT_ID = "1489266190432997520";
-        const API_URL = "https://bologna-rp-api-84yl.onrender.com";
-        const REDIRECT_URI = encodeURIComponent(window.location.origin);
-        
-        function showMessage(text, type) {
-            const msgDiv = document.getElementById('message');
-            msgDiv.innerHTML = text;
-            msgDiv.className = 'message ' + type;
-            msgDiv.style.display = 'block';
-            setTimeout(() => {
-                msgDiv.style.display = 'none';
-            }, 5000);
-        }
-        
+        const CLIENT_ID = 'IL_TUO_CLIENT_ID_DISCORD';  // <-- METTI IL TUO CLIENT ID
+        const REDIRECT_URI = encodeURIComponent('https://bologna-rp-site.vercel.app/dashboard.html');
+        const SCOPE = 'identify guilds';
+
         function loginWithDiscord() {
-            const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=identify+guilds+guilds.members.read`;
-            window.location.href = authUrl;
+            const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=${SCOPE}`;
+            window.location.href = discordAuthUrl;
         }
-        
-        async function processLogin(discordId, discordName) {
-            // PULISCI TUTTI I VECCHI DATI
-            localStorage.clear();
-            
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        discord_id: discordId,
-                        discord_nome: discordName,
-                        nome_rp: discordName
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    localStorage.setItem('session', JSON.stringify(data.session));
-                    window.location.href = '/dashboard.html';
-                } else {
-                    showMessage('❌ ' + data.error, 'error');
-                }
-            } catch (error) {
-                showMessage('❌ Errore di connessione', 'error');
-            }
-        }
-        
-        function checkForToken() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-            
-            if (token) {
-                localStorage.setItem('discord_token', token);
-                showMessage('⏳ Recupero informazioni...', 'success');
-                
-                fetch('https://discord.com/api/users/@me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                })
-                .then(res => res.json())
-                .then(user => {
-                    processLogin(user.id, user.username);
-                })
-                .catch(err => {
-                    showMessage('❌ Errore: ' + err.message, 'error');
-                });
-            }
-        }
-        
-        // Se c'è già una sessione, vai direttamente alla dashboard
-        const session = localStorage.getItem('session');
-        if (session) {
-            window.location.href = '/dashboard.html';
-        }
-        
-        checkForToken();
+
+        // Controllo se siamo già su dashboard (non fare nulla qui)
+        // Questo file è solo login, non deve reindirizzare da solo
     </script>
 </body>
 </html>
