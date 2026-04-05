@@ -140,6 +140,12 @@
         button:hover {
             background: #4752c4;
         }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -153,30 +159,34 @@
     </div>
 
     <div class="container">
-        <div class="grid">
-            <!-- ANNUNCI -->
-            <div class="card">
-                <h2>📢 ANNUNCI</h2>
-                <div id="annunciList"></div>
+        <div class="loading" id="loading">Caricamento...</div>
+        
+        <div id="content" style="display: none;">
+            <div class="grid">
+                <!-- ANNUNCI -->
+                <div class="card">
+                    <h2>📢 ANNUNCI</h2>
+                    <div id="annunciList"></div>
+                </div>
+
+                <!-- TICKET -->
+                <div class="card">
+                    <h2>🎫 I MIEI TICKET</h2>
+                    <div id="ticketsList"></div>
+                </div>
             </div>
 
-            <!-- TICKET -->
-            <div class="card">
-                <h2>🎫 I MIEI TICKET</h2>
-                <div id="ticketsList"></div>
+            <!-- CREA NUOVO TICKET -->
+            <div class="create-ticket">
+                <h3>➕ NUOVO TICKET</h3>
+                <select id="ticketCategory">
+                    <option value="generale">Generale - Amministrazione WEB</option>
+                    <option value="concessionario">Concessionario</option>
+                    <option value="agenzia">Agenzia Immobiliare</option>
+                </select>
+                <textarea id="ticketMessage" rows="3" placeholder="Descrivi il tuo problema..."></textarea>
+                <button onclick="createTicket()">CREA TICKET</button>
             </div>
-        </div>
-
-        <!-- CREA NUOVO TICKET -->
-        <div class="create-ticket">
-            <h3>➕ NUOVO TICKET</h3>
-            <select id="ticketCategory">
-                <option value="generale">Generale - Amministrazione WEB</option>
-                <option value="concessionario">Concessionario</option>
-                <option value="agenzia">Agenzia Immobiliare</option>
-            </select>
-            <textarea id="ticketMessage" rows="3" placeholder="Descrivi il tuo problema..."></textarea>
-            <button onclick="createTicket()">CREA TICKET</button>
         </div>
     </div>
 
@@ -184,105 +194,139 @@
         let currentUser = null;
         let userRoles = [];
 
-        // Ottieni token dall'URL o localStorage
+        // === GESTIONE TOKEN ===
+        // Prendi il token dall'URL (dopo redirect da Discord)
         const hash = window.location.hash.substring(1);
         const params = new URLSearchParams(hash);
-        const token = params.get('access_token');
-        if (token) {
-            localStorage.setItem('discord_token', token);
-            window.location.hash = '';
+        const tokenFromUrl = params.get('access_token');
+        
+        if (tokenFromUrl) {
+            // Salva il token e rimuovilo dall'URL
+            localStorage.setItem('discord_token', tokenFromUrl);
+            // Reindirizza senza il token nell'URL
+            window.location.href = '/dashboard.html';
         }
 
         const discordToken = localStorage.getItem('discord_token');
 
-        // Funzione per ottenere info utente da Discord
+        // Se non c'è token, vai al login
+        if (!discordToken) {
+            window.location.href = '/';
+        }
+
+        // === FUNZIONI API ===
         async function getUserInfo() {
             const response = await fetch('https://discord.com/api/users/@me', {
                 headers: { Authorization: `Bearer ${discordToken}` }
             });
+            if (!response.ok) {
+                // Token non valido, logout
+                logout();
+                return null;
+            }
             return response.json();
         }
 
-        // Funzione per ottenere i ruoli dell'utente (da Supabase o localmente)
         async function getUserRoles(userId) {
-            // Per ora restituisci ruoli di esempio
-            // Qui poi collegherai Supabase
-            return ['Amministrazione WEB']; // Esempio
+            // TODO: collegare con Supabase
+            // Per ora ruoli di esempio
+            return ['Amministrazione WEB'];
         }
 
-        // Carica annunci (filtrati per ruolo)
         async function loadAnnunci() {
-            // Per ora annunci di esempio
             const annunci = [
-                { titolo: 'Benvenuto su Bologna RP!', contenuto: 'Buon divertimento!', ruolo_permesso: 'tutti' },
-                { titolo: 'Riunione staff stasera', contenuto: 'Ore 21:00', ruolo_permesso: 'Amministrazione WEB' }
+                { titolo: '📢 Benvenuto su Bologna RP!', contenuto: 'Buon divertimento e segui le regole!', ruolo_permesso: 'tutti' },
+                { titolo: '👑 Riunione Staff', contenuto: 'Stasera ore 21:00 in chat vocale', ruolo_permesso: 'Amministrazione WEB' },
+                { titolo: '🚗 Offerte Concessionario', contenuto: 'Sconti del 20% su tutte le auto!', ruolo_permesso: 'Concessionario' },
+                { titolo: '🏠 Nuove Case', contenuto: 'Aggiunte nuove proprietà in centro', ruolo_permesso: 'Agenzia Immobiliare' }
             ];
 
             const filtered = annunci.filter(a => a.ruolo_permesso === 'tutti' || userRoles.includes(a.ruolo_permesso));
             
             const container = document.getElementById('annunciList');
-            container.innerHTML = filtered.map(a => `
-                <div class="annuncio">
-                    <h3>${a.titolo}</h3>
-                    <p>${a.contenuto}</p>
-                </div>
-            `).join('');
-        }
-
-        // Carica lista ticket
-        async function loadTickets() {
-            const response = await fetch('/api/tickets/list', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_discord_id: currentUser.id })
-            });
-            const tickets = await response.json();
-            
-            const container = document.getElementById('ticketsList');
-            if (!tickets.length) {
-                container.innerHTML = '<p>Nessun ticket aperto</p>';
-                return;
-            }
-
-            container.innerHTML = tickets.map(t => `
-                <div class="ticket-item" onclick="openTicket('${t.ticket_id}')">
-                    <div>
-                        <strong>#${t.ticket_id}</strong><br>
-                        <small>Categoria: ${t.categoria}</small>
+            if (filtered.length === 0) {
+                container.innerHTML = '<p>Nessun annuncio disponibile</p>';
+            } else {
+                container.innerHTML = filtered.map(a => `
+                    <div class="annuncio">
+                        <h3>${a.titolo}</h3>
+                        <p>${a.contenuto}</p>
                     </div>
-                    <span class="ticket-status status-${t.status}">${t.status}</span>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
-        // Crea nuovo ticket
+        async function loadTickets() {
+            try {
+                const response = await fetch('/api/tickets/list', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_discord_id: currentUser.id })
+                });
+                
+                const tickets = await response.json();
+                const container = document.getElementById('ticketsList');
+                
+                if (!tickets || tickets.length === 0) {
+                    container.innerHTML = '<p>📭 Nessun ticket aperto</p>';
+                    return;
+                }
+
+                container.innerHTML = tickets.map(t => `
+                    <div class="ticket-item" onclick="openTicket('${t.ticket_id}')">
+                        <div>
+                            <strong>🎫 ${t.ticket_id}</strong><br>
+                            <small>📂 Categoria: ${t.categoria}</small><br>
+                            <small>📅 ${new Date(t.created_at).toLocaleString()}</small>
+                        </div>
+                        <span class="ticket-status status-${t.status}">${t.status}</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Errore caricamento ticket:', error);
+                document.getElementById('ticketsList').innerHTML = '<p>❌ Errore nel caricamento dei ticket</p>';
+            }
+        }
+
         async function createTicket() {
             const categoria = document.getElementById('ticketCategory').value;
             const messaggio = document.getElementById('ticketMessage').value;
             
             if (!messaggio.trim()) {
-                alert('Scrivi un messaggio!');
+                alert('❌ Scrivi un messaggio per il ticket!');
                 return;
             }
 
-            const response = await fetch('/api/tickets/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_discord_id: currentUser.id,
-                    user_discord_name: currentUser.username,
-                    categoria: categoria,
-                    messaggio: messaggio
-                })
-            });
+            const button = event.target;
+            button.textContent = 'Creazione in corso...';
+            button.disabled = true;
 
-            const data = await response.json();
-            if (data.success) {
-                alert('Ticket creato! ID: ' + data.ticket_id);
-                document.getElementById('ticketMessage').value = '';
-                loadTickets();
-            } else {
-                alert('Errore: ' + data.error);
+            try {
+                const response = await fetch('/api/tickets/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_discord_id: currentUser.id,
+                        user_discord_name: currentUser.username,
+                        categoria: categoria,
+                        messaggio: messaggio
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Ticket creato con successo!\nID: ${data.ticket_id}`);
+                    document.getElementById('ticketMessage').value = '';
+                    loadTickets();
+                } else {
+                    alert('❌ Errore: ' + (data.error || 'Sconosciuto'));
+                }
+            } catch (error) {
+                alert('❌ Errore di connessione: ' + error.message);
+            } finally {
+                button.textContent = 'CREA TICKET';
+                button.disabled = false;
             }
         }
 
@@ -295,21 +339,28 @@
             window.location.href = '/';
         }
 
-        // Inizializzazione
+        // === INIZIALIZZAZIONE ===
         async function init() {
-            if (!discordToken) {
-                window.location.href = '/';
-                return;
+            try {
+                currentUser = await getUserInfo();
+                if (!currentUser) return;
+                
+                userRoles = await getUserRoles(currentUser.id);
+                
+                document.getElementById('userName').textContent = currentUser.username;
+                if (currentUser.avatar) {
+                    document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+                }
+                
+                await loadAnnunci();
+                await loadTickets();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+            } catch (error) {
+                console.error('Errore init:', error);
+                document.getElementById('loading').innerHTML = '❌ Errore nel caricamento. <button onclick="location.reload()">Riprova</button>';
             }
-
-            currentUser = await getUserInfo();
-            userRoles = await getUserRoles(currentUser.id);
-            
-            document.getElementById('userName').textContent = currentUser.username;
-            document.getElementById('userAvatar').src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
-            
-            await loadAnnunci();
-            await loadTickets();
         }
 
         init();
