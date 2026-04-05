@@ -59,6 +59,15 @@
             background: #4752c4;
             transform: scale(1.05);
         }
+
+        .error {
+            color: #ff6b6b;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -68,10 +77,11 @@
         <button class="discord-btn" onclick="loginWithDiscord()">
             💬 ACCEDI CON DISCORD
         </button>
+        <div id="error" class="error"></div>
     </div>
 
     <script>
-        const CLIENT_ID = '1473999356125249556';  // Il tuo vero Client ID
+        const CLIENT_ID = '1473999356125249556';
         const REDIRECT_URI = encodeURIComponent('https://bologna-rp-site.vercel.app/dashboard.html');
         const SCOPE = 'identify guilds';
 
@@ -80,8 +90,18 @@
             window.location.href = discordAuthUrl;
         }
 
-        // Controllo se siamo già su dashboard (non fare nulla qui)
-        // Questo file è solo login, non deve reindirizzare da solo
+        // Controllo errori
+        window.onload = function() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const error = params.get('error');
+            
+            if (error) {
+                const errorDiv = document.getElementById('error');
+                errorDiv.textContent = 'Errore di autenticazione: ' + error;
+                errorDiv.style.display = 'block';
+            }
+        };
     </script>
 </body>
 </html>
